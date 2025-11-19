@@ -1,0 +1,95 @@
+import { useCallback, useEffect, useMemo, useState } from "react";
+
+import { fetchTimer, type TimerResponse } from "@/lib/api";
+import { HACKATHON_END } from "@/lib/constants";
+
+type CountdownStats = {
+  seconds: number;
+  days: number;
+  hours: number;
+  minutes: number;
+  secondsRemainder: number;
+};
+
+type UseOfficialTimerOptions = {
+  pollEveryMs?: number;
+  fallbackTarget?: Date;
+};
+
+export function useOfficialTimer({
+  pollEveryMs = 60_000,
+  fallbackTarget = HACKATHON_END,
+}: UseOfficialTimerOptions = {}) {
+  const [timer, setTimer] = useState<TimerResponse | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [loaded, setLoaded] = useState(false);
+
+  const refresh = useCallback(async () => {
+    try {
+      const data = await fetchTimer();
+      setTimer(data);
+      setError(null);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Unknown error";
+      setError(message);
+    } finally {
+      setLoaded(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    refresh();
+    const id = setInterval(refresh, pollEveryMs);
+    return () => clearInterval(id);
+  }, [pollEveryMs, refresh]);
+
+  const computeSeconds = useCallback(
+    (source: TimerResponse | null) => {
+      if (source) {
+        if (source.status === "pending") {
+          return source.seconds_until_start + source.seconds_remaining;
+        }
+        if (source.status === "running") {
+          return source.seconds_remaining;
+        }
+        return 0;
+      }
+      if (!fallbackTarget) return 0;
+      return Math.max(0, Math.floor((fallbackTarget.getTime() - Date.now()) / 1000));
+    },
+    [fallbackTarget]
+  );
+
+  const countdownSeconds = useMemo(() => {
+    return computeSeconds(timer);
+  }, [computeSeconds, timer]);
+
+  const [seconds, setSeconds] = useState<number>(() => computeSeconds(null));
+  useEffect(() => {
+    setSeconds(countdownSeconds);
+  }, [countdownSeconds]);
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setSeconds((prev) => (prev > 0 ? prev - 1 : 0));
+    }, 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  const breakdown: CountdownStats = useMemo(() => {
+    const safeSeconds = Math.max(0, seconds);
+    const days = Math.floor(safeSeconds / 86_400);
+    const hours = Math.floor((safeSeconds % 86_400) / 3_600);
+    const minutes = Math.floor((safeSeconds % 3_600) / 60);
+    const secondsRemainder = safeSeconds % 60;
+    return { seconds: safeSeconds, days, hours, minutes, secondsRemainder };
+  }, [seconds]);
+
+  return {
+    timer,
+    error,
+    loaded,
+    refresh,
+    countdown: breakdown,
+  };
+}

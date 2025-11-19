@@ -1,0 +1,47 @@
+[
+  {
+    "id": 1,
+    "empresa": "Nebolus",
+    "titol": "Cartografia del futur",
+    "descripcio": "Desenvolupa un sistema que generi mapes intel·ligents en temps real a partir de dades caòtiques. Podria implicar drons autònoms... o potser només ratxes de vent molt sospitoses.",
+    "badges": ["maps", "IA", "streaming-data"],
+    "premi": "Vol en globus aerostàtic patrocinat per Nebolus",
+    "link": null
+  },
+  {
+    "id": 2,
+    "empresa": "Agrotecnio",
+    "titol": "La granja autoregulada",
+    "descripcio": "Crea un model capaç de predir i ajustar l'estat d'un camp o granja sense intervenció humana. Bonus si detecta gallines amb actitud sospitosa.",
+    "badges": ["agrotech", "ML", "sensorització"],
+    "premi": "Visita VIP a un laboratori d’Agrotecnio amb degustació científica",
+    "link": null
+  },
+  {
+    "id": 3,
+    "empresa": "Bonarea",
+    "titol": "Ruta òptima del pollastre viatger",
+    "descripcio": "Optimitza la cadena logística d’un producte fresc amb condicions canviants cada 30 minuts. La càrrega pot incloure animals hiperactius.",
+    "badges": ["logística", "optimització", "simulació"],
+    "premi": "Cistella gegant de productes Bonarea durant 3 mesos",
+    "link": null
+  },
+  {
+    "id": 4,
+    "empresa": "Ingrup",
+    "titol": "Fabricació fantasma",
+    "descripcio": "Dissenya un dashboard per controlar una línia de producció virtual amb comportaments paranormals. Alarma si els robots fan coses rares.",
+    "badges": ["IoT", "mesures", "automation"],
+    "premi": "Tour privat per la fàbrica d’Ingrup amb regal sorpresa",
+    "link": null
+  },
+  {
+    "id": 5,
+    "empresa": "Restb.ai",
+    "titol": "La casa impossible",
+    "descripcio": "Entrena un model capaç de detectar anomalies absurdes en fotos immobiliàries: escales que no duen enlloc, neveres al lavabo, portes duplicades...",
+    "badges": ["computer-vision", "IA", "image-processing"],
+    "premi": "Subscripció Premium fictícia a l'API de Restb.ai durant 1 any",
+    "link": "testr"
+  }
+]

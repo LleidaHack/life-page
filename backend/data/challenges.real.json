@@ -1,0 +1,47 @@
+[
+  {
+    "id": 1,
+    "empresa": "Agrotecnio",
+    "titol": "Logística intel·ligent per a porcs a Catalunya",
+    "descripcio": "Dissenyar un sistema DSS i simulació per planificar la recollida i el transport de porcs entre granges i escorxadors, optimitzant costos i beneficis, amb dashboards i mapes.",
+    "badges": ["simulació", "optimització", "logística", "analytics", "dashboard", "GIS"],
+    "premi": "1000€ a repartir pels integrants del grup",
+    "link": "https://hackeps2025.slack.com/archives/C09SAKD3JGM"
+  },
+  {
+    "id": 2,
+    "empresa": "bonÀrea",
+    "titol": "Control de sortides digitals amb PLC i comunicació amb DBs",
+    "descripcio": "Configurar un PLC Siemens S7-1510 per controlar sortides (LEDs i una cerradura) via DBs i comunicacions S7 optimitzat, OPC UA i Web Server AWP, ajustant paràmetres i verificant el comportament.",
+    "badges": ["PLC", "Siemens S7", "OPC UA", "AWP", "IoT industrial", "SCADA"],
+    "premi": "1000 euros per gastar  al botiga online d’enginyeria de bonÀrea",
+    "link": "https://hackeps2025.slack.com/archives/C09T8C26PDE"
+  },
+  {
+    "id": 3,
+    "empresa": "Eurecat — Applied AI",
+    "titol": "NebulOuS: El teu propi clúster Multi-Cloud",
+    "descripcio": "Plataforma per crear, desplegar i monitoritzar clústers multi-cloud (GCP, AWS, Azure i edge) amb UX pròpia i integracions d’API.",
+    "badges": ["multi-cloud", "DevOps", "Docker/K8s", "monitorització", "infraestructura", "IA"],
+    "premi": "1r premi: 1000€ Amazon; Joves promeses: 200€ Amazon",
+    "link": "https://hackeps2025.slack.com/archives/C09S7LY9VPD"
+  },
+  {
+    "id": 4,
+    "empresa": "restb.ai",
+    "titol": "El Joc de Barris",
+    "descripcio": "Aplicació que recomani barris a Los Angeles per perfils tipus «Joc de Trons», amb un motor de justificació basat en dades i integració d’APIs (p. ex., Overpass/OSM).",
+    "badges": ["ciència de dades", "recomanador", "APIs", "mapes", "UX/UI", "IA"],
+    "premi": "Un Waynabox per a cada integrant de l'equip",
+    "link": "https://hackeps2025.slack.com/archives/C09S7M39FDZ"
+  },
+    {
+    "id": 5,
+    "empresa": "Ingrup",
+    "titol": "",
+    "descripcio": "",
+    "badges": [],
+    "premi": "1r premi: 4 ulleres Vr: 2n premi: 350 euros al XRshop",
+    "link": "https://hackeps2025.slack.com/archives/C09S7M39FDZ"
+  }
+]

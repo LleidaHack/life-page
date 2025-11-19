@@ -1,0 +1,66 @@
+[
+  {
+    "question": "Què és la HackEPS?",
+    "answer": "La HackEPS és una hackathon universitària de 24 hores intensives organitzada per LleidaHack juntament amb l’Escola Politècnica Superior de la Universitat de Lleida (UdL). Durant el cap de setmana, els participants formen equips i desenvolupen prototips tecnològics per resoldre reptes proposats per empreses i institucions col·laboradores."
+  },
+  {
+    "question": "Qui hi pot participar?",
+    "answer": "Està adreçada principalment a estudiants universitaris, de formació professional i joves recent graduats interessats en programació, disseny, negoci, comunicació, maquinari o qualsevol àmbit tecnològic. No cal ser un expert: el més important és tenir ganes d'aprendre, crear i treballar en equip."
+  },
+  {
+    "question": "Com funcionen els equips?",
+    "answer": "Els equips solen ser de 3 a 4 persones. Et pots inscriure amb el teu equip o de manera individual; en aquest cas, l'organització facilita activitats perquè trobis companys a l'inici."
+  },
+  {
+    "question": "On se celebra?",
+    "answer": "Generalment a les instal·lacions de l'Escola Politècnica Superior (EPS, UdL), al campus de Cappont de Lleida. Depenent de l'edició, hi pot haver activitats a altres espais de la universitat propers."
+  },
+  {
+    "question": "Com i quan es recullen les acreditacions?",
+    "answer": "Les acreditacions es lliuren el matí del primer dia del hackathon, abans de la cerimònia d'obertura, al vestíbul principal de l'edifici. Amb l'acreditació rebràs la teva identificació i informació bàsica de l'esdeveniment."
+  },
+  {
+    "question": "Com comença el hackathon?",
+    "answer": "L'esdeveniment s'inaugura amb una cerimònia d'obertura on es presenten els reptes de les empreses i s'expliquen les normes. Just després, els equips comencen a treballar i tenen unes 24 hores per programar el seu projecte."
+  },
+  {
+    "question": "Què necessito portar?",
+    "answer": "Portàtil i carregador, document d'identitat o targeta d'estudiant, auriculars i adaptadors, roba còmoda per a 24 hores intenses, qualsevol maquinari extra que vulguis fer servir (plaques, sensors, etc.) i altres útils com regletes, bateria externa o ampolles d'aigua."
+  },
+  {
+    "question": "Hi haurà connexió a internet?",
+    "answer": "Sí. Tots els participants tindran accés a la xarxa Wi-Fi de l'esdeveniment."
+  },
+  {
+    "question": "S'ofereix menjar i beure?",
+    "answer": "Sí. L'organització ofereix esmorzar, dinar, sopar i snacks durant tot el cap de setmana, sense cap cost adicional per als participants."
+  },
+  {
+    "question": "Hi haurà activitats paral·leles?",
+    "answer": "Per descomptat! A més de programar, s'organitzen xerrades, tallers i dinàmiques per aprendre noves tecnologies, relaxar-se i fer networking amb altres equips i empreses."
+  },
+  {
+    "question": "Com s'avaluen els projectes?",
+    "answer": "Al final de la hackathon, els equips presenten els seus projectes davant d'un jurat format per professionals del sector, representants d'empreses i membres de l'organització. Es valoren aspectes com la innovació de la idea, qualitat tècnica, viabilitat i aplicació real, i la presentació i demo del prototip."
+  },
+  {
+    "question": "Quins premis hi ha?",
+    "answer": "Els premis varien a cada edició, però solen incloure diners en metàl·lic, maquinari, vals de programari o experiències aportats pels patrocinadors."
+  },
+  {
+    "question": "Qui es queda amb la propietat intel·lectual dels projectes?",
+    "answer": "En general, la propietat intel·lectual pertany als equips participants. Cada edició publica les bases legals, on s'explicita aquest punt."
+  },
+  {
+    "question": "Hi ha mentors o suport durant l'esdeveniment?",
+    "answer": "Sí. Durant les 24 h hi ha mentors disponibles (organitzadors, voluntaris i professionals d'empreses) que ajuden els equips en dubtes tècnics, de negoci o de disseny."
+  },
+  {
+    "question": "Hi ha un codi de conducta?",
+    "answer": "Sí. La HackEPS es regeix per un codi de conducta inclusiu i respectuós, que assegura un ambient segur i lliure d'assetjament o discriminació. Tots els participants i assistents ho han de complir."
+  },
+  {
+    "question": "Com m'inscric i on consulto dubtes?",
+    "answer": "Les inscripcions es fan a través de la web oficial de la HackEPS o a la plataforma Devpost de l'edició. Per dubtes, podeu contactar amb l'organització a través d'email o les xarxes socials (Instagram, X/Twitter, Facebook)."
+  }
+]

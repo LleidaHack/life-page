@@ -1,0 +1,128 @@
+{
+  "Wednesday": [
+    {
+      "location": "EPS",
+      "start": "08:30",
+      "end": "10:00",
+      "title": "ChekIN",
+      "description": "Arribada i registre dels participants a l’Escola Politècnica Superior."
+    },
+    {
+      "location": "Auditori",
+      "start": "10:00",
+      "end": "11:00",
+      "title": "Acte d'inauguració",
+      "description": "Benvinguda oficial, presentació de reptes i explicació de les normes.",
+      "showInMainPage": true,
+      "link": "https://lleidahack.com"
+    },
+    {
+      "location": "Aules Hacking",
+      "start": "11:00",
+      "end": null,
+      "title": "Inici de la programació",
+      "description": "Els equips comencen a treballar en els seus projectes."
+    },
+    {
+      "location": "Menjador",
+      "start": "14:00",
+      "end": "15:00",
+      "title": "Dinar",
+      "description": "Pausa per dinar per a tots els assistents."
+    },
+    {
+      "location": "Exterior EPS",
+      "start": "15:00",
+      "end": null,
+      "title": "Joc de Cua",
+      "description": "Joc de Cua per a tots els assistents."
+    },
+    {
+      "location": "Aula Activitats",
+      "start": "17:00",
+      "end": null,
+      "title": "Simon Dice",
+      "description": "Simon Dice"
+    },
+    {
+      "location": "Escales Menjador",
+      "start": "19:00",
+      "end": null,
+      "title": "Pinyata",
+      "description": "Joc de la pinyata"
+    },
+    {
+      "location": "Polivalent",
+      "start": "20:30",
+      "end": "22:30",
+      "showInMainPage": true,
+      "title": "Sopar",
+      "description": "Pausa per sopar per a tots els assistents."
+    },
+    {
+      "location": "Aula Activitats",
+      "start": "22:00",
+      "end": null,
+      "title": "Joc de les cadires",
+      "description": "Joc de les cadires"
+    },
+    {
+      "location": "Aula Activitats",
+      "start": "23:00",
+      "end": null,
+      "title": "Barret al cono",
+      "description": "Barret al cono"
+    }
+  ],
+  "Sunday": [
+    {
+      "location": "Aula Activitats",
+      "start": "00:00",
+      "end": null,
+      "title": "Fotos Pixelades",
+      "description": "Joc de les fotos pixelades"
+    },
+    {
+      "location": "Aula Activitats",
+      "start": "01:00",
+      "end": null,
+      "title": "Slide Karaoke",
+      "description": "Joc de Slide Karaoke"
+    },
+    {
+      "location": "Zona menjador",
+      "start": "08:30",
+      "end": "09:00",
+      "title": "Esmorzar",
+      "description": "Esmorzar del segon dia per recarregar energies abans de les últimes hores de hacking."
+    },
+    {
+      "location": "Aules de hacking",
+      "start": "11:00",
+      "end": null,
+      "title": "Fi programació",
+      "description": "Finalització del període de desenvolupament dels projectes."
+    },
+    {
+      "location": "EPS",
+      "start": "11:30",
+      "end": "13:30",
+      "title": "Presentacions dels projectes",
+      "description": "Els equips exposen els seus projectes davant del jurat i el públic."
+    },
+    {
+      "location": "Polivalent 3.03",
+      "start": "14:00",
+      "end": "14:30",
+      "title": "Acte de clausura",
+      "description": "Entrega de premis i tancament oficial de la HackEPS."
+    },
+    {
+      "location": "EPS",
+      "start": "15:00",
+      "end": null,
+      "title": "Dinar",
+      "description": "Dinar de comiat per a tots els assistents."
+    }
+  ]
+}

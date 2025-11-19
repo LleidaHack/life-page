@@ -1,0 +1,58 @@
+{
+  "Wednesday": [
+    {
+      "location": "Espai principal",
+      "start": "08:00",
+      "end": "09:00",
+      "title": "Check-in i esmorzar sorpresa",
+      "description": "Recull l'acreditació i agafa energia per a la presentació de reptes."
+    },
+    {
+      "location": "Auditori",
+      "start": "09:00",
+      "end": "10:00",
+      "title": "Kick-off confidencial",
+      "description": "Benvinguda i pistes generals del que us espera sense revelar massa detalls.",
+      "showInMainPage": false,
+      "link": "https://lleidahack.com/live"
+    },
+    {
+      "location": "Zona hacking",
+      "start": "10:00",
+      "end": "20:00",
+      "title": "Marató creativa",
+      "description": "Treballa amb el teu equip, resol minireptes i participa en tallers sorpresa."
+    },
+    {
+      "location": "Food corner",
+      "start": "21:00",
+      "end": "23:30",
+      "title": "Sopar energètic",
+      "showInMainPage": true,
+      "description": "Break coordinat per recarregar piles abans del tram nocturn."
+    }
+  ],
+  "Sunday": [
+    {
+      "location": "Zona hacking",
+      "start": "08:30",
+      "end": "10:30",
+      "title": "Últim sprint",
+      "description": "Moments finals per polir el projecte i preparar la demo."
+    },
+    {
+      "location": "Auditori",
+      "start": "11:00",
+      "end": "13:00",
+      "title": "Pitches davant el jurat",
+      "description": "Presentacions breus per compartir la vostra solució amb públic i sponsors."
+    },
+    {
+      "location": "Auditori",
+      "start": "13:30",
+      "end": "14:00",
+      "title": "Closing mystery",
+      "description": "Entrega de premis i anunci d'algunes sorpreses de l'edició."
+    }
+  ]
+}

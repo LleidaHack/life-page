@@ -1,0 +1,19 @@
+services:
+  backend:
+    build: ./backend
+    env_file:
+      - backend/.env 
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build: ./frontend/live-page
+    env_file:
+      - frontend/live-page/.env.local
+    environment:
+      NEXT_PUBLIC_API_BASE_URL: http://172.20.10.7:8000
+      API_INTERNAL_BASE_URL: http://backend:8000
+    depends_on:
+      - backend
+    ports:
+      - "3000:3000"
