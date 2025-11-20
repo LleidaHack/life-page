@@ -1,19 +1,48 @@
+version: '3.8'
+
+networks:
+  proxy-tier:
+    driver: bridge
+
 services:
   backend:
-    build: ./backend
-    env_file:
-      - backend/.env 
-    ports:
-      - "8000:8000"
+    build:
+      context: ./backend
+    networks:
+      - proxy-tier
+    # do not publish backend port to host — keep it internal only
+    expose:
+      - "8000"
 
   frontend:
-    build: ./frontend/live-page
-    env_file:
-      - frontend/live-page/.env.local
-    environment:
-      NEXT_PUBLIC_API_BASE_URL: http://172.20.10.7:8000
-      API_INTERNAL_BASE_URL: http://backend:8000
+    build:
+      context: ./frontend/live-page
+      args:
+        NEXT_PUBLIC_API_BASE_URL: https://backendlive.lleidahack.dev
+        API_INTERNAL_BASE_URL: https://backendlive.lleidahack.dev
+    networks:
+      - proxy-tier
     depends_on:
       - backend
+    # do not publish frontend port to host — keep it internal only
+    expose:
+      - "3000"
+    environment:
+      - NEXT_PUBLIC_API_BASE_URL=https://backendlive.lleidahack.dev
+      - API_INTERNAL_BASE_URL=https://backendlive.lleidahack.dev
+
+  nginx-proxy-manager:
+    image: jc21/nginx-proxy-manager:latest
+    restart: unless-stopped
+    networks:
+      - proxy-tier
     ports:
-      - "3000:3000"
+      - "80:80"      # http (public)
+      - "443:443"    # https (public)
+      - "81:81"      # admin UI (public)
+    volumes:
+      - ./data/nginx-proxy-manager/data:/data
+      - ./data/nginx-proxy-manager/letsencrypt:/etc/letsencrypt
+    environment:
+      # optional environment variables — NPM uses sqlite DB in /data by default
+      - DISABLE_IPV6=true
