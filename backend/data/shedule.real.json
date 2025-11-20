@@ -4,30 +4,29 @@
       "location": "EPS",
       "start": "08:30",
       "end": "10:00",
-      "title": "Check in",
+      "title": "Check in 🧳",
       "description": "Arribada i registre dels participants a l’Escola Politècnica Superior."
     },
     {
       "location": "Auditori",
       "start": "10:00",
       "end": "11:00",
-      "title": "Acte d'inauguració",
+      "title": "Acte d'inauguració 🎤",
       "description": "Benvinguda oficial, presentació de reptes i explicació de les normes.",
-      "showInMainPage": true,
-      "link": "https://lleidahack.com"
+      "showInMainPage": true
     },
     {
       "location": "Aules Hacking",
       "start": "11:00",
       "end": null,
-      "title": "Inici de la programació",
+      "title": "Inici de la programació 💻",
       "description": "Els equips comencen a treballar en els seus projectes."
     },
     {
       "location": "Menjador",
       "start": "14:00",
       "end": "15:00",
-      "title": "Dinar",
+      "title": "Dinar 🍽️",
       "showInMainPage": true,
       "description": "Pausa per dinar per a tots els assistents."
     },
@@ -36,14 +35,14 @@
       "start": "15:00",
       "end": "15:45",
       "showInMainPage": true,
-      "title": "Joc de Cua",
+      "title": "Joc de Cua 🦊",
       "description": "Els jugadors han de aconseguir robar la cua d’un altre equip sense perdre la seva pròpia."
     },
     {
       "location": "Aula Activitats (0.08)",
       "start": "17:00",
       "end": "17:45",
-      "title": "Simon Says",
+      "title": "Simon Says 🎮",
       "showInMainPage": true,
       "description": "Els jugadors han de fer cas a les ordres del Simon."
     },
@@ -51,7 +50,7 @@
       "location": "Escales Menjador",
       "start": "19:00",
       "end": "20:00",
-      "title": "Pinyata",
+      "title": "Pinyata 🎉",
       "showInMainPage": true,
       "description": "Els jugadors amb els ulls tapats han de trencar la pinyata per aconseguir els premis que hi ha a dins."
     },
@@ -60,15 +59,15 @@
       "start": "20:30",
       "end": "22:30",
       "showInMainPage": true,
-      "title": "Sopar",
+      "title": "Sopar 🍕",
       "description": "Pausa per sopar per a tots els assistents."
     },
     {
       "location": "Aula Activitats (0.08)",
       "start": "22:00",
       "end": "22:45",
+      "title": "Joc de les cadires 🪑🎵",
       "showInMainPage": true,
-      "title": "Joc de les cadires",
       "description": "Els jugadors han de assentarse quan la música s'aturi per no quedar-se sense cadira."
     },
     {
@@ -76,7 +75,7 @@
       "start": "23:00",
       "end": "23:45",
       "showInMainPage": true,
-      "title": "Barret al cono",
+      "title": "Barret al cono 🎯",
       "description": "Els jugadors hauran de llençar un barret dins d’un con situat a certa distància."
     }
   ],
@@ -86,7 +85,7 @@
       "start": "00:00",
       "end": "00:45",
       "showInMainPage": true,
-      "title": "Fotos Pixelades",
+      "title": "Fotos Pixelades 🖼️",
       "description": "Els jugadors hauran d'endevinar imatges pixelades projectades en una pantalla."
     },
     {
@@ -94,7 +93,7 @@
       "start": "01:00",
       "end": "2:00",
       "showInMainPage": true,
-      "title": "Slide Karaoke",
+      "title": "Slide Karaoke 🎤📊",
       "description": "Els jugadors hauran de presentar una diapositiva sense saber-ne el contingut prèviament."
     },
     {
@@ -102,14 +101,14 @@
       "start": "08:30",
       "end": "09:00",
       "showInMainPage": true,
-      "title": "Esmorzar",
+      "title": "Esmorzar 🥐",
       "description": "Esmorzar del segon dia per recarregar energies abans de les últimes hores de hacking."
     },
     {
       "location": "Aules de hacking",
       "start": "11:00",
       "end": null,
-      "title": "Fi programació",
+      "title": "Fi programació ⏱️",
       "description": "Finalització del període de desenvolupament dels projectes."
     },
     {
@@ -117,7 +116,7 @@
       "start": "11:30",
       "end": "13:30",
       "showInMainPage": true,
-      "title": "Presentacions dels projectes",
+      "title": "Presentacions dels projectes 🧠🚀",
       "description": "Els equips exposen els seus projectes davant del jurat."
     },
     {
@@ -125,14 +124,14 @@
       "start": "14:00",
       "end": "14:30",
       "showInMainPage": true,
-      "title": "Acte de clausura",
+      "title": "Acte de clausura 🏆",
       "description": "Entrega de premis i tancament oficial de la HackEPS."
     },
     {
       "location": "EPS",
       "start": "15:00",
       "end": null,
-      "title": "Dinar",
+      "title": "Dinar 🍽️",
       "showInMainPage": true,
       "description": "Dinar de comiat per a tots els assistents."
     }
