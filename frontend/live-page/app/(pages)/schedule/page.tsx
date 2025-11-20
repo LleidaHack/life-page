@@ -80,7 +80,7 @@ export default async function SchedulePage() {
                     return (
                       <TableRow
                         key={`${day}-${index}`}
-                        className="h-20 text-xs sm:text-sm md:text-base text-cta/80"
+                        className="h-20 text-xs sm:text-sm md:text-base text-cta/80 hover:bg-transparent focus-visible:bg-transparent"
                       >
                         <TableCell className="font-semibold">
                           {task.location}
