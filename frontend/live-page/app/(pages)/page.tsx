@@ -6,6 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
@@ -44,7 +45,10 @@ type FeaturedEventContent = {
   link?: string | null;
 };
 
-const FALLBACK_FEATURED_EVENT: { isActive: boolean; content: FeaturedEventContent } = {
+const FALLBACK_FEATURED_EVENT: {
+  isActive: boolean;
+  content: FeaturedEventContent;
+} = {
   isActive: false,
   content: {
     title: "Cerimònia d'obertura",
@@ -56,10 +60,14 @@ const FALLBACK_FEATURED_EVENT: { isActive: boolean; content: FeaturedEventConten
   },
 };
 
-const deriveFeaturedEvent = (day: string, entry: ScheduleEntry): FeaturedEventContent => {
+const deriveFeaturedEvent = (
+  day: string,
+  entry: ScheduleEntry
+): FeaturedEventContent => {
   const fallback = FALLBACK_FEATURED_EVENT.content;
   const title = entry.Title ?? entry.title ?? fallback.title;
-  const description = entry.Description ?? entry.description ?? fallback.description;
+  const description =
+    entry.Description ?? entry.description ?? fallback.description;
   const hasStart = Boolean(entry.start);
   const hasEnd = Boolean(entry.end);
   const normalizedTime = hasStart
@@ -94,9 +102,10 @@ export default function Home() {
     f3: false,
     f4: false,
   });
-  const [featuredEvent, setFeaturedEvent] = useState<FeaturedEventContent | null>(
-    FALLBACK_FEATURED_EVENT.isActive ? FALLBACK_FEATURED_EVENT.content : null
-  );
+  const [featuredEvent, setFeaturedEvent] =
+    useState<FeaturedEventContent | null>(
+      FALLBACK_FEATURED_EVENT.isActive ? FALLBACK_FEATURED_EVENT.content : null
+    );
   const [isTwitchLive, setIsTwitchLive] = useState(false);
   const [twitchParents, setTwitchParents] = useState<string[]>(
     INITIAL_TWITCH_PARENTS
@@ -105,7 +114,9 @@ export default function Home() {
   const [crabBubbleText, setCrabBubbleText] = useState<string | null>(null);
   const crabBubbleTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [mermaidMessage, setMermaidMessage] = useState<string | null>(null);
-  const mermaidBubbleTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const mermaidBubbleTimeout = useRef<ReturnType<typeof setTimeout> | null>(
+    null
+  );
   const socialLinks = [
     {
       name: "Instagram",
@@ -222,7 +233,9 @@ export default function Home() {
         }
 
         setFeaturedEvent(
-          FALLBACK_FEATURED_EVENT.isActive ? FALLBACK_FEATURED_EVENT.content : null
+          FALLBACK_FEATURED_EVENT.isActive
+            ? FALLBACK_FEATURED_EVENT.content
+            : null
         );
       } catch (error) {
         if ((error as Error)?.name === "AbortError") {
@@ -233,7 +246,10 @@ export default function Home() {
     };
 
     loadFeaturedEvent();
-    const interval = window.setInterval(loadFeaturedEvent, FEATURED_REFRESH_INTERVAL_MS);
+    const interval = window.setInterval(
+      loadFeaturedEvent,
+      FEATURED_REFRESH_INTERVAL_MS
+    );
 
     return () => {
       mounted = false;
@@ -436,10 +452,10 @@ export default function Home() {
             transform: translateX(80vw) scaleX(1);
           }
           50% {
-            transform: translateX(80vw) scaleX(-1);
+            transform: translateX(80vw) scaleX(1);
           }
           100% {
-            transform: translateX(-20vw) scaleX(-1);
+            transform: translateX(-20vw) scaleX(1);
           }
         }
         .paused {
@@ -697,7 +713,10 @@ export default function Home() {
 
       {/* Mermaid friend anchored to the bottom-left corner */}
       <div className="pointer-events-none absolute bottom-0 left-0 z-10 hidden pb-6 pl-4 md:block">
-        <div className="pointer-events-auto relative w-80 cursor-pointer" onClick={handleMermaidClick}>
+        <div
+          className="pointer-events-auto relative w-80 cursor-pointer"
+          onClick={handleMermaidClick}
+        >
           {mermaidMessage && (
             <div className="absolute -top-12 left-24 flex -translate-x-1/2 items-center rounded-2xl bg-white/95 px-4 py-2 text-sm font-semibold text-black shadow">
               {mermaidMessage}
@@ -822,7 +841,9 @@ export default function Home() {
         <div className="grid gap-6 md:grid-cols-2">
           <Card>
             <CardHeader>
-              <CardTitle className="text-center text-2xl text-cta/80">Wifi</CardTitle>
+              <CardTitle className="text-center text-2xl text-cta/80">
+                Wifi
+              </CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col items-center gap-4 text-center">
               <Image
@@ -836,24 +857,40 @@ export default function Home() {
                 quality={80}
               />
               <div>
-                <p className="text-sm uppercase tracking-widest text-cta/60">
+                {/* <p className="text-sm uppercase tracking-widest text-cta/60">
                   Xarxa
                 </p>
                 <p className="text-2xl font-semibold text-cta/80">HackEPS-Guest</p>
                 <p className="text-base text-cta/80">
                   Contrasenya: staycreative!
-                </p>
+                </p> */}
+                <Button
+                  variant="link"
+                  asChild
+                  className="mt-2 h-12 rounded-2xl border border-cta text-cta no-underline"
+                >
+                  <Link
+                    href="/wifi-guide.pdf"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="no-underline"
+                  >
+                    Com connectar-me al Wi-Fi?
+                  </Link>
+                </Button>
               </div>
             </CardContent>
             <CardFooter className="text-center text-xs text-cta/60">
-              Si tens problemes de connexió, acosta&apos;t al help desk o escriu-nos
-              per Slack.
+              Si tens problemes de connexió, acosta&apos;t al help desk o
+              escriu-nos per Slack.
             </CardFooter>
           </Card>
 
           <Card>
             <CardHeader>
-              <CardTitle className="text-center text-2xl text-cta/80">Contacte</CardTitle>
+              <CardTitle className="text-center text-2xl text-cta/80">
+                Contacte
+              </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-4">

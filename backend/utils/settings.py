@@ -26,11 +26,11 @@ def _localized(dt: datetime | str, tz_name: str = DEFAULT_TZ_NAME) -> datetime:
 
 
 def _default_start() -> datetime:
-    return datetime(2025, 11, 19, 9, 0, 0, tzinfo=DEFAULT_TZ)
+    return datetime(2025, 11, 22, 11, 0, 0, tzinfo=DEFAULT_TZ)
 
 
 def _default_end() -> datetime:
-    return datetime(2025, 11, 20, 11, 0, 0, tzinfo=DEFAULT_TZ)
+    return datetime(2025, 11, 23, 15, 0, 0, tzinfo=DEFAULT_TZ)
 
 
 class Settings(BaseModel):

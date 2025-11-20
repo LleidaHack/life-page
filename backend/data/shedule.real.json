@@ -1,10 +1,10 @@
 {
-  "Wednesday": [
+  "Saturday": [
     {
       "location": "EPS",
       "start": "08:30",
       "end": "10:00",
-      "title": "ChekIN",
+      "title": "Check in",
       "description": "Arribada i registre dels participants a l’Escola Politècnica Superior."
     },
     {
@@ -28,6 +28,7 @@
       "start": "14:00",
       "end": "15:00",
       "title": "Dinar",
+      "showInMainPage": true,
       "description": "Pausa per dinar per a tots els assistents."
     },
     {

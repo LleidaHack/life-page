@@ -82,6 +82,28 @@ def get_alert_history():
     return list(alert_history)
 
 
+@router.delete(
+    "/alerts/{alert_id}",
+    summary="Delete a pending alert",
+    dependencies=[Depends(require_admin)],
+)
+async def delete_alert(alert_id: str):
+    _purge_expired_alerts()
+    target = None
+    for alert in list(alert_history):
+        if alert.get("id") == alert_id:
+            target = alert
+            break
+    if target is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Alert not found")
+    try:
+        alert_history.remove(target)
+    except ValueError:
+        pass
+    await manager.broadcast_json({"type": "alert_removed", "payload": {"id": alert_id}})
+    return {"status": "deleted", "alert_id": alert_id}
+
+
 @router.get(
     "/stats",
     summary="Get notification channel stats",

@@ -10,8 +10,8 @@ const mono = Space_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "HackEps2025 Live Page",
-  description: "Live page for HackEps2025 event showing schedule, challenges, map, and more.",
+  title: "HackEPS2025 Live Page",
+  description: "Live page for HackEPS2025 event showing schedule, challenges, map, and more.",
 };
 
 export default function RootLayout({

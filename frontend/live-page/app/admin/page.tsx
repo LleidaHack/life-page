@@ -10,6 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import {
   adminLogin,
+  deleteAlert,
   fetchAlertHistory,
   fetchNotificationStats,
   sendAlert,
@@ -66,9 +67,11 @@ export default function AdminPage() {
   const [history, setHistory] = useState<AlertMessage[]>([]);
   const [historyLoading, setHistoryLoading] = useState(false);
   const [historyError, setHistoryError] = useState<string | null>(null);
+  const [historyFeedback, setHistoryFeedback] = useState<string | null>(null);
   const [stats, setStats] = useState<NotificationStats | null>(null);
   const [statsLoading, setStatsLoading] = useState(false);
   const [statsError, setStatsError] = useState<string | null>(null);
+  const [deletingAlertId, setDeletingAlertId] = useState<string | null>(null);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -137,6 +140,7 @@ export default function AdminPage() {
   const loadHistory = useCallback(async () => {
     setHistoryLoading(true);
     setHistoryError(null);
+    setHistoryFeedback(null);
     try {
       const data = await fetchAlertHistory();
       setHistory(data);
@@ -216,6 +220,34 @@ export default function AdminPage() {
       }
     },
     [alertForm, handleLogout, isTokenExpired, loadStats, token]
+  );
+
+  const handleDeleteAlert = useCallback(
+    async (alertId: string) => {
+      if (!token || isTokenExpired) {
+        setHistoryError("Cal iniciar sessio abans d'eliminar alertes.");
+        return;
+      }
+      setDeletingAlertId(alertId);
+      setHistoryError(null);
+      setHistoryFeedback(null);
+      try {
+        await deleteAlert(token, alertId);
+        setHistory((prev) => prev.filter((alert) => alert.id !== alertId));
+        setHistoryFeedback("Alerta eliminada correctament.");
+        loadStats();
+      } catch (error) {
+        const message =
+          error instanceof Error ? error.message : "No s'ha pogut eliminar l'alerta.";
+        setHistoryError(message);
+        if (message.includes("401")) {
+          handleLogout();
+        }
+      } finally {
+        setDeletingAlertId(null);
+      }
+    },
+    [handleLogout, isTokenExpired, loadStats, token]
   );
 
   const inputClasses =
@@ -400,6 +432,7 @@ export default function AdminPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               {historyError && <p className="text-sm text-red-500">{historyError}</p>}
+              {historyFeedback && <p className="text-sm text-emerald-600">{historyFeedback}</p>}
               {!history.length && !historyError && (
                 <p className="text-sm text-slate-600">Encara no hi ha  alerta.</p>
               )}
@@ -419,6 +452,17 @@ export default function AdminPage() {
                         {LEVEL_OPTIONS.find((opt) => opt.value === alert.level)?.label ??
                           alert.level}
                       </span>
+                      {isAuthenticated && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleDeleteAlert(alert.id)}
+                          disabled={deletingAlertId === alert.id}
+                          className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                        >
+                          {deletingAlertId === alert.id ? "Eliminant..." : "Eliminar"}
+                        </Button>
+                      )}
                       <span className="text-xs text-slate-500">
                         {new Date(alert.created_at).toLocaleString("ca-ES", {
                           hour: "2-digit",

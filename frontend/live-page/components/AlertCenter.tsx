@@ -179,6 +179,8 @@ export default function AlertCenter() {
             setAlerts(data.payload.slice(0, MAX_VISIBLE_ALERTS));
           } else if (data?.type === "alert" && data.payload) {
             handleIncomingAlert(data.payload as AlertMessage);
+          } else if (data?.type === "alert_removed" && data.payload?.id) {
+            removeAlert(String(data.payload.id));
           }
         } catch (error) {
           console.warn("Invalid alert message", error);
@@ -206,7 +208,7 @@ export default function AlertCenter() {
       timers.forEach((timer) => clearTimeout(timer));
       timers.clear();
     };
-  }, [handleIncomingAlert]);
+  }, [handleIncomingAlert, removeAlert]);
 
   const statusLabel = useMemo(() => {
     switch (connectionState) {

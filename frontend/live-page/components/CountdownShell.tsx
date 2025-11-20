@@ -72,14 +72,14 @@ export default function CountdownShell({ className }: CountdownShellProps = {}) 
           ? "Hackathon finalitzat"
           : timer?.status === "pending"
           ? "Comença aviat"
-          : "Pantalla complerta"
+          : "Pantalla completa"
       }
     >
       <button
         type="button"
         onClick={goFullscreenAndOpen}
         className={cn("relative flex items-center justify-center cursor-pointer transition hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60", className)}
-        aria-label="Abrir /fullscreen a pantalla completa"
+        aria-label="Abrir fullscreen a pantalla completa"
         disabled={timer?.status === "finished"}
       >
         <div className="relative h-[150px] w-[220px] sm:h-[180px] sm:w-[260px] lg:h-[200px] lg:w-[300px]">

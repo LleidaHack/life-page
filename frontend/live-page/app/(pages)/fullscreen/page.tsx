@@ -376,7 +376,7 @@ export default function FullscreenMinimal() {
         </div>
         <div className="absolute bottom-4 left-2 w-[540px] max-w-[55vw] sm:left-12">
           <Image
-            src="/duck_animation.gif"
+            src="/duck_animation.webp"
             alt="Ona blava al primer pla"
             width={800}
             height={200}
@@ -435,7 +435,7 @@ export default function FullscreenMinimal() {
           <section className="space-y-5 rounded-[32px] border border-white/15 bg-white/5 p-6 backdrop-blur-xl">
             <div>
               <h2 className="text-2xl font-semibold text-cta">
-                Què queda per fer ?
+              Què queda per fer?
               </h2>
               {scheduleError && (
                 <p className="mt-1 text-xs text-red-200">{scheduleError}</p>
@@ -478,7 +478,7 @@ export default function FullscreenMinimal() {
               )}
               {remainingEvents > 0 && (
                 <p className="text-xs uppercase tracking-[0.35em] text-cta/60">
-                  + {remainingEvents} events més
+                  + {remainingEvents} esdeveniments més
                 </p>
               )}
             </div>
@@ -498,7 +498,7 @@ function MobileFullscreenNotice() {
         </h1>
         <p className="text-base text-primary/80 sm:text-lg">
           La vista a pantalla completa està optimitzada per pantalles grans.
-          Obre-la des un ordinador o projector per continuar.
+          Obre-la des dun ordinador o projector per continuar.
         </p>
         <Link
           href="/"

@@ -220,6 +220,24 @@ export async function fetchAlertHistory(signal?: AbortSignal): Promise<AlertMess
   return response.json();
 }
 
+export async function deleteAlert(
+  token: string,
+  alertId: string,
+  signal?: AbortSignal
+): Promise<void> {
+  const response = await fetch(buildApiUrl(`/notifications/alerts/${alertId}`), {
+    method: "DELETE",
+    headers: {
+      Accept: "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    cache: "no-store",
+    signal,
+  });
+
+  assertResponseOk(response, "Delete alert");
+}
+
 export async function fetchNotificationStats(
   token: string,
   signal?: AbortSignal

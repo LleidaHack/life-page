@@ -37,9 +37,11 @@ ENV API_INTERNAL_BASE_URL=${API_INTERNAL_BASE_URL}
 RUN addgroup -g 1001 nodejs \
     && adduser -S -G nodejs -u 1001 nextjs
 
-COPY --from=build /app/.next/standalone ./
-COPY --from=build /app/public ./public
-COPY --from=build /app/.next/static ./.next/static
+COPY --from=build --chown=nextjs:nodejs /app/public ./public
+COPY --from=build --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=build --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+RUN mkdir -p .next/cache && chown -R nextjs:nodejs .next
 
 USER nextjs
 
