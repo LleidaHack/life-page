@@ -38,9 +38,9 @@
     {
     "id": 5,
     "empresa": "Ingrup",
-    "titol": "",
-    "descripcio": "",
-    "badges": [],
+    "titol": "El mundo al revés",
+    "descripcio": "Desenvolupar un sistema de detecció i seguiment d’objectes en un espai físic mitjançant múltiples càmeres, reflectint en temps real els seus moviments en una rèplica tridimensional d’un món alternatiu fosc i distorsionat, accessible des d’un navegador web o un visor de realitat virtual.",
+    "badges": ["Detecció d'objectes en temps real", "Integració de visió artificial", "Sincronització 3D interactiva", "Accés web i realitat virtual"],
     "premi": "1r premi: 4 ulleres Vr: 2n premi: 350 euros al XRshop",
     "link": "https://hackeps2025.slack.com/archives/C09S7M39FDZ"
   }

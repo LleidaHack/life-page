@@ -2,7 +2,6 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
 
-from routes.activities import router as router_activities
 from routes.challenges import Router as router_challenges
 from routes.faqs import router as router_faqs
 from routes.notifications import router as router_notifications
@@ -27,4 +26,3 @@ app.include_router(router_schedule)
 app.include_router(router_timer)
 app.include_router(router_challenges)
 app.include_router(router_notifications)
-app.include_router(router_activities)

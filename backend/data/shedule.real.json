@@ -34,26 +34,29 @@
     {
       "location": "Exterior EPS",
       "start": "15:00",
-      "end": null,
+      "end": "15:45",
+      "showInMainPage": true,
       "title": "Joc de Cua",
-      "description": "Joc de Cua per a tots els assistents."
+      "description": "Els jugadors han de aconseguir robar la cua d’un altre equip sense perdre la seva pròpia."
     },
     {
-      "location": "Aula Activitats",
+      "location": "Aula Activitats (0.08)",
       "start": "17:00",
-      "end": null,
-      "title": "Simon Dice",
-      "description": "Simon Dice"
+      "end": "17:45",
+      "title": "Simon Says",
+      "showInMainPage": true,
+      "description": "Els jugadors han de fer cas a les ordres del Simon."
     },
     {
       "location": "Escales Menjador",
       "start": "19:00",
-      "end": null,
+      "end": "20:00",
       "title": "Pinyata",
-      "description": "Joc de la pinyata"
+      "showInMainPage": true,
+      "description": "Els jugadors amb els ulls tapats han de trencar la pinyata per aconseguir els premis que hi ha a dins."
     },
     {
-      "location": "Polivalent",
+      "location": "Menjador EPS",
       "start": "20:30",
       "end": "22:30",
       "showInMainPage": true,
@@ -61,39 +64,44 @@
       "description": "Pausa per sopar per a tots els assistents."
     },
     {
-      "location": "Aula Activitats",
+      "location": "Aula Activitats (0.08)",
       "start": "22:00",
-      "end": null,
+      "end": "22:45",
+      "showInMainPage": true,
       "title": "Joc de les cadires",
-      "description": "Joc de les cadires"
+      "description": "Els jugadors han de assentarse quan la música s'aturi per no quedar-se sense cadira."
     },
     {
-      "location": "Aula Activitats",
+      "location": "Aula Activitats (0.08)",
       "start": "23:00",
-      "end": null,
+      "end": "23:45",
+      "showInMainPage": true,
       "title": "Barret al cono",
-      "description": "Barret al cono"
+      "description": "Els jugadors hauran de llençar un barret dins d’un con situat a certa distància."
     }
   ],
   "Sunday": [
     {
-      "location": "Aula Activitats",
+      "location": "Aula Activitats (0.08)",
       "start": "00:00",
-      "end": null,
+      "end": "00:45",
+      "showInMainPage": true,
       "title": "Fotos Pixelades",
-      "description": "Joc de les fotos pixelades"
+      "description": "Els jugadors hauran d'endevinar imatges pixelades projectades en una pantalla."
     },
     {
-      "location": "Aula Activitats",
+      "location": "Aula Activitats (0.08)",
       "start": "01:00",
-      "end": null,
+      "end": "2:00",
+      "showInMainPage": true,
       "title": "Slide Karaoke",
-      "description": "Joc de Slide Karaoke"
+      "description": "Els jugadors hauran de presentar una diapositiva sense saber-ne el contingut prèviament."
     },
     {
       "location": "Zona menjador",
       "start": "08:30",
       "end": "09:00",
+      "showInMainPage": true,
       "title": "Esmorzar",
       "description": "Esmorzar del segon dia per recarregar energies abans de les últimes hores de hacking."
     },
@@ -108,13 +116,15 @@
       "location": "EPS",
       "start": "11:30",
       "end": "13:30",
+      "showInMainPage": true,
       "title": "Presentacions dels projectes",
-      "description": "Els equips exposen els seus projectes davant del jurat i el públic."
+      "description": "Els equips exposen els seus projectes davant del jurat."
     },
     {
       "location": "Polivalent 3.03",
       "start": "14:00",
       "end": "14:30",
+      "showInMainPage": true,
       "title": "Acte de clausura",
       "description": "Entrega de premis i tancament oficial de la HackEPS."
     },
@@ -123,6 +133,7 @@
       "start": "15:00",
       "end": null,
       "title": "Dinar",
+      "showInMainPage": true,
       "description": "Dinar de comiat per a tots els assistents."
     }
   ]
