@@ -52,7 +52,7 @@ export default function Footer() {
 
         <div className="flex items-center justify-center gap-x-5">
           <Image
-            src="/background/lleidahack-key.png"
+            src="/background/lleidahack-key.webp"
             alt="Logo"
             className="h-20 w-20 object-contain sm:h-24 sm:w-24"
             width={150}

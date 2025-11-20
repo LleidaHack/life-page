@@ -84,7 +84,7 @@ export default function CountdownShell({ className }: CountdownShellProps = {}) 
       >
         <div className="relative h-[150px] w-[220px] sm:h-[180px] sm:w-[260px] lg:h-[200px] lg:w-[300px]">
           <Image
-            src="/concha.png"
+            src="/concha.webp"
             alt="Countdown shell"
             fill
             priority

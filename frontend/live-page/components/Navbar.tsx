@@ -43,7 +43,7 @@ export default function Navbar() {
         <div className="flex items-center gap-4 sm:gap-6">
           <Link href="/" prefetch>
             <Image
-              src="/background/lleidahack-key.png"
+              src="/background/lleidahack-key.webp"
               alt="Logo"
               width={120}
               height={60}
