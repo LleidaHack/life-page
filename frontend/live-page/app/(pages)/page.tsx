@@ -23,7 +23,7 @@ import {
 const TWITCH_CHANNEL = "LleidaHack";
 const TWITCH_STATUS_URL = `https://decapi.me/twitch/uptime/${TWITCH_CHANNEL}`;
 const TWITCH_POLL_INTERVAL_MS = 60_000;
-const INITIAL_TWITCH_PARENTS = ["live.lleidahack.dev"];
+const INITIAL_TWITCH_PARENTS = ["live.lleidahack.com"];
 const CRAB_MESSAGES = [
   "No me toquis!",
   "Cangrejo #1",
@@ -782,10 +782,10 @@ export default function Home() {
                   <iframe
                     title="LleidaHack Live Stream"
                     src={twitchEmbedSrc}
-                    allow="autoplay; fullscreen; picture-in-picture"
+                    // allow="autoplay; fullscreen; picture-in-picture"
                     allowFullScreen
                     className="aspect-video w-full"
-                    style={{ visibility: "visible", opacity: 1 }}
+                    // style={{ visibility: "visible", opacity: 1 }}
                   />
                 </div>
               ) : (
