@@ -20,6 +20,7 @@ services:
       args:
         NEXT_PUBLIC_API_BASE_URL: https://backendlive.lleidahack.dev
         API_INTERNAL_BASE_URL: https://backendlive.lleidahack.dev
+        NEXT_PUBLIC_TWITCH_PARENT: local
     networks:
       - proxy-tier
     depends_on:
@@ -30,6 +31,7 @@ services:
     environment:
       - NEXT_PUBLIC_API_BASE_URL=https://backendlive.lleidahack.dev
       - API_INTERNAL_BASE_URL=https://backendlive.lleidahack.dev
+      - NEXT_PUBLIC_TWITCH_PARENT=local
 
   nginx-proxy-manager:
     image: jc21/nginx-proxy-manager:latest
