@@ -8,6 +8,8 @@ services:
   backend:
     build:
       context: ./backend
+    env_file:
+      - ./backend/.env
     networks:
       - proxy-tier
     # do not publish backend port to host — keep it internal only
