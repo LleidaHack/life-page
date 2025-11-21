@@ -38,17 +38,28 @@ export default function Footer() {
               </Link>
             ))}
           </div>
-          <Link href="https://lleidahack.dev/hackeps/terms" className="text-primary" target="_blank">
+          <Link
+            href="https://lleidahack.dev/hackeps/terms"
+            className="text-primary"
+            target="_blank"
+          >
             <p>Termes i condicions</p>
           </Link>
-          <Link href="https://lleidahack.dev/hackeps/privacy" className="text-primary text-sm" target="_blank">
+          <Link
+            href="https://lleidahack.dev/hackeps/privacy"
+            className="text-primary text-sm"
+            target="_blank"
+          >
             <p>Política de privacitat</p>
           </Link>
         </div>
+        <div className="block text-center">
+                  <p className="text-white text-base">Made with love by LleidaHack</p>
+        <Link href="https://clouding.io/" target="_blank">
+          <p>Powered By Clouding.io</p>
+        </Link>
+        </div>
 
-        <p className="text-white text-base">
-          Made with love by LleidaHack
-        </p>
 
         <div className="flex items-center justify-center gap-x-5">
           <Image
