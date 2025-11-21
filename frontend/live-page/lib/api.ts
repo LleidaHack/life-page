@@ -152,7 +152,7 @@ export async function fetchFaqs(signal?: AbortSignal): Promise<Faq[]> {
 }
 
 export async function fetchSchedule(signal?: AbortSignal): Promise<ScheduleResponse> {
-  const response = await fetch(buildApiUrl("/schedule"), {
+  const response = await fetch(buildApiUrl("/schedule/"), {
     method: "GET",
     headers: {
       Accept: "application/json",
