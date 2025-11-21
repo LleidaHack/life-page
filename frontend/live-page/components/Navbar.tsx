@@ -38,7 +38,7 @@ export default function Navbar() {
   );
 
   return (
-    <nav className="relative z-50 mb-12 w-full bg-cta px-4 pb-4 pt-3 text-primary shadow-sm sm:mb-16 sm:px-6 lg:mb-0 lg:pb-4 lg:pt-4">
+    <nav className="relative z-50 w-full bg-cta px-4 pb-4 pt-3 text-primary shadow-sm sm:mb-16 sm:px-6 lg:mb-0 lg:pb-4 lg:pt-4">
       <div className="flex flex-wrap items-center gap-4 lg:flex-nowrap lg:justify-between">
         <div className="flex items-center gap-4 sm:gap-6">
           <Link href="/" prefetch>
