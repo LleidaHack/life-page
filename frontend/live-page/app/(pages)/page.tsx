@@ -20,14 +20,10 @@ import {
   Youtube,
 } from "lucide-react";
 
-const TWITCH_CHANNEL = "lleidahack"; // lleidahack
+const TWITCH_CHANNEL = "LleidaHack";
 const TWITCH_STATUS_URL = `https://decapi.me/twitch/uptime/${TWITCH_CHANNEL}`;
 const TWITCH_POLL_INTERVAL_MS = 60_000;
-const INITIAL_TWITCH_PARENTS = process.env.NEXT_PUBLIC_TWITCH_PARENT
-  ? process.env.NEXT_PUBLIC_TWITCH_PARENT.split(",")
-      .map((parent) => parent.trim())
-      .filter(Boolean)
-  : [];
+const INITIAL_TWITCH_PARENTS = ["live.lleidahack.dev"];
 const CRAB_MESSAGES = [
   "No me toquis!",
   "Cangrejo #1",
@@ -786,9 +782,10 @@ export default function Home() {
                   <iframe
                     title="LleidaHack Live Stream"
                     src={twitchEmbedSrc}
+                    allow="autoplay; fullscreen; picture-in-picture"
                     allowFullScreen
                     className="aspect-video w-full"
-                    loading="lazy"
+                    style={{ visibility: "visible", opacity: 1 }}
                   />
                 </div>
               ) : (
