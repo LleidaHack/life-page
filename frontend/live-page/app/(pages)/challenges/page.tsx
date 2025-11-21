@@ -86,7 +86,7 @@ export default async function ChallengesPage() {
                         target="_blank"
                         className="inline-flex w-full items-center justify-center rounded-2xl border border-cta/20 bg-white/10 px-4 py-2 text-sm font-medium text-cta transition hover:border-black"
                       >
-                        Veure brief
+                        Slack
                       </Link>
                     )}
                   </CardFooter>
