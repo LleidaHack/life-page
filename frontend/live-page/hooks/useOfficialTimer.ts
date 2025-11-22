@@ -3,6 +3,9 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { fetchTimer, type TimerResponse } from "@/lib/api";
 import { HACKATHON_END } from "@/lib/constants";
 
+// Manual offset requested: subtract 3 hours from the countdown
+const MANUAL_OFFSET_SECONDS = 4 * 3600;
+
 type CountdownStats = {
   seconds: number;
   days: number;
@@ -45,19 +48,23 @@ export function useOfficialTimer({
 
   const computeSeconds = useCallback(
     (source: TimerResponse | null) => {
+      let baseSeconds: number | null = null;
       if (source) {
         if (source.status === "finished") return 0;
         const endMs = Date.parse(source.end_datetime);
         const nowMs = Date.parse(source.now);
         if (!Number.isNaN(endMs) && !Number.isNaN(nowMs)) {
-          return Math.max(0, Math.floor((endMs - nowMs) / 1000));
+          baseSeconds = Math.max(0, Math.floor((endMs - nowMs) / 1000));
         }
         if (!Number.isNaN(endMs)) {
-          return Math.max(0, Math.floor((endMs - Date.now()) / 1000));
+          baseSeconds = Math.max(0, Math.floor((endMs - Date.now()) / 1000));
         }
       }
-      if (!fallbackTarget) return 0;
-      return Math.max(0, Math.floor((fallbackTarget.getTime() - Date.now()) / 1000));
+      if (baseSeconds === null) {
+        if (!fallbackTarget) return 0;
+        baseSeconds = Math.max(0, Math.floor((fallbackTarget.getTime() - Date.now()) / 1000));
+      }
+      return Math.max(0, baseSeconds - MANUAL_OFFSET_SECONDS);
     },
     [fallbackTarget]
   );
