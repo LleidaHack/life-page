@@ -43,6 +43,7 @@ type FullscreenCapableElement = HTMLElement & {
 
 export default function CountdownShell({ className }: CountdownShellProps = {}) {
   const { countdown, timer } = useOfficialTimer({ fallbackTarget: HACKATHON_END });
+  console.log(countdown);
   const hours = countdown.hours + countdown.days * 24;
   const hh = useMemo(() => String(hours).padStart(2, "0"), [hours]);
   const mm = useMemo(() => String(countdown.minutes).padStart(2, "0"), [countdown.minutes]);

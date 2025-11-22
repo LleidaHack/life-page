@@ -46,13 +46,15 @@ export function useOfficialTimer({
   const computeSeconds = useCallback(
     (source: TimerResponse | null) => {
       if (source) {
-        if (source.status === "pending") {
-          return source.seconds_until_start + source.seconds_remaining;
+        if (source.status === "finished") return 0;
+        const endMs = Date.parse(source.end_datetime);
+        const nowMs = Date.parse(source.now);
+        if (!Number.isNaN(endMs) && !Number.isNaN(nowMs)) {
+          return Math.max(0, Math.floor((endMs - nowMs) / 1000));
         }
-        if (source.status === "running") {
-          return source.seconds_remaining;
+        if (!Number.isNaN(endMs)) {
+          return Math.max(0, Math.floor((endMs - Date.now()) / 1000));
         }
-        return 0;
       }
       if (!fallbackTarget) return 0;
       return Math.max(0, Math.floor((fallbackTarget.getTime() - Date.now()) / 1000));

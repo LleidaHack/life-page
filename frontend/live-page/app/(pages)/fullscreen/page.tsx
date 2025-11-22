@@ -185,16 +185,18 @@ export default function FullscreenMinimal() {
     []
   );
   const countdownTargetSeconds = useMemo(() => {
-    if (!timerData) {
-      return fallbackSeconds;
+    if (timerData?.status === "finished") {
+      return 0;
     }
-    if (timerData.status === "pending") {
-      return timerData.seconds_until_start + timerData.seconds_remaining;
+    const endMs = timerData ? Date.parse(timerData.end_datetime) : NaN;
+    const nowMs = timerData ? Date.parse(timerData.now) : NaN;
+    if (!Number.isNaN(endMs) && !Number.isNaN(nowMs)) {
+      return Math.max(0, Math.floor((endMs - nowMs) / 1000));
     }
-    if (timerData.status === "running") {
-      return timerData.seconds_remaining;
+    if (!Number.isNaN(endMs)) {
+      return Math.max(0, Math.floor((endMs - Date.now()) / 1000));
     }
-    return 0;
+    return fallbackSeconds;
   }, [fallbackSeconds, timerData]);
   const countdown = useCountdownFromSeconds(countdownTargetSeconds);
   const now = countdown.now;
