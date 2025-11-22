@@ -6,7 +6,7 @@ import {
   type ScheduleResponse,
   type TimerResponse,
 } from "@/lib/api";
-import { HACKATHON_END, HACKATHON_START } from "@/lib/constants";
+import { DEFAULT_TIMEZONE, HACKATHON_END, HACKATHON_START } from "@/lib/constants";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useMemo, useState, useEffect } from "react";
@@ -227,6 +227,7 @@ export default function FullscreenMinimal() {
         weekday: "short",
         hour: "2-digit",
         minute: "2-digit",
+        timeZone: DEFAULT_TIMEZONE,
       }).format(event.dateObj),
     }));
 
