@@ -188,20 +188,11 @@ export default function FullscreenMinimal() {
     if (timerData?.status === "finished") {
       return 0;
     }
-    let baseSeconds: number | null = null;
     const endMs = timerData ? Date.parse(timerData.end_datetime) : NaN;
-    const nowMs = timerData ? Date.parse(timerData.now) : NaN;
-    if (!Number.isNaN(endMs) && !Number.isNaN(nowMs)) {
-      baseSeconds = Math.max(0, Math.floor((endMs - nowMs) / 1000));
-    }
     if (!Number.isNaN(endMs)) {
-      baseSeconds = Math.max(0, Math.floor((endMs - Date.now()) / 1000));
+      return Math.max(0, Math.floor((endMs - Date.now()) / 1000));
     }
-    if (baseSeconds === null) {
-      baseSeconds = fallbackSeconds;
-    }
-    // Manual offset: subtract 3 hours from displayed countdown
-    return Math.max(0, baseSeconds - 3 * 3600);
+    return fallbackSeconds;
   }, [fallbackSeconds, timerData]);
   const countdown = useCountdownFromSeconds(countdownTargetSeconds);
   const now = countdown.now;
