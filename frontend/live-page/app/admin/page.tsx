@@ -18,6 +18,7 @@ import {
   type AlertMessage,
   type NotificationStats,
 } from "@/lib/api";
+import { DEFAULT_TIMEZONE } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
 const STORAGE_KEY = "hackeps-admin-token";
@@ -263,6 +264,7 @@ export default function AdminPage() {
         minute: "2-digit",
         day: "2-digit",
         month: "2-digit",
+        timeZone: DEFAULT_TIMEZONE,
       });
     } catch {
       return stats.last_alert_at;
@@ -470,6 +472,7 @@ export default function AdminPage() {
                           second: "2-digit",
                           day: "2-digit",
                           month: "2-digit",
+                          timeZone: DEFAULT_TIMEZONE,
                         })}
                       </span>
                     </div>
