@@ -3,6 +3,7 @@
 FROM node:20-alpine AS base
 
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV TZ=Europe/Madrid
 
 WORKDIR /app
 
