@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 
 import { getApiBaseUrl, type AlertMessage } from "@/lib/api";
+import { DEFAULT_TIMEZONE } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
 type ConnectionState = "connecting" | "open" | "closed";
@@ -68,6 +69,7 @@ function formatClock(timestamp: string) {
     hour: "2-digit",
     minute: "2-digit",
     second: "2-digit",
+    timeZone: DEFAULT_TIMEZONE,
   });
 }
 
