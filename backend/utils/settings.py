@@ -30,7 +30,7 @@ def _default_start() -> datetime:
 
 
 def _default_end() -> datetime:
-    return datetime(2025, 11, 23, 15, 0, 0, tzinfo=DEFAULT_TZ)
+    return datetime(2025, 11, 23, 11, 0, 0, tzinfo=DEFAULT_TZ)
 
 
 class Settings(BaseModel):
