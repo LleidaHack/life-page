@@ -5,8 +5,8 @@ export default function manifest(): MetadataRoute.Manifest {
     short_name: "HackEPS",
     start_url: "/",
     display: "standalone",
-    background_color: "#faf4df",
-    theme_color: "#203b2d",
+    background_color: "#94cbf5",
+    theme_color: "#ff7430",
     icons: [
       {
         src: "/tractor-icon.svg",

@@ -40,11 +40,11 @@ export default function TractorRun({ onClose }: { onClose: () => void }) {
         obstacles.push({ lane: Math.floor(Math.random() * 3), y: -50 });
         spawn = 0;
       }
-      ctx.fillStyle = "#99b34d";
+      ctx.fillStyle = "#78c6bd";
       ctx.fillRect(0, 0, 360, 540);
-      ctx.fillStyle = "#cfa66d";
+      ctx.fillStyle = "#3c3c3c";
       ctx.fillRect(35, 0, 290, 540);
-      ctx.strokeStyle = "#f2dc9a";
+      ctx.strokeStyle = "#ffffff";
       ctx.setLineDash([20, 20]);
       ctx.lineDashOffset = -distance * 10;
       for (const x of [132, 228]) {
@@ -56,9 +56,9 @@ export default function TractorRun({ onClose }: { onClose: () => void }) {
       ctx.setLineDash([]);
       for (const o of obstacles) {
         o.y += delta * speed;
-        ctx.fillStyle = "#dab33e";
+        ctx.fillStyle = "#ff7430";
         ctx.fillRect(52 + o.lane * 96, o.y, 62, 42);
-        ctx.strokeStyle = "#7c5d28";
+        ctx.strokeStyle = "#2e2e2e";
         ctx.strokeRect(52 + o.lane * 96, o.y, 62, 42);
         if (o.lane === lane.current && o.y + 42 > 430 && o.y < 496) {
           stopped = true;
@@ -67,12 +67,12 @@ export default function TractorRun({ onClose }: { onClose: () => void }) {
       }
       obstacles = obstacles.filter((o) => o.y < 560);
       const x = 54 + lane.current * 96;
-      ctx.fillStyle = "#193b2b";
+      ctx.fillStyle = "#2e2e2e";
       ctx.fillRect(x - 6, 452, 16, 40);
       ctx.fillRect(x + 44, 452, 16, 40);
-      ctx.fillStyle = "#e9542d";
+      ctx.fillStyle = "#ff7430";
       ctx.fillRect(x, 430, 50, 66);
-      ctx.fillStyle = "#d7f0df";
+      ctx.fillStyle = "#94cbf5";
       ctx.fillRect(x + 9, 440, 32, 24);
       setScore(Math.floor(distance));
       if (!stopped) frame = requestAnimationFrame(draw);
