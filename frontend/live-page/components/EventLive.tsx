@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import AlertCenter, { type LiveAlert } from "./AlertCenter";
 import LiveHomePanels from "./LiveHomePanels";
+import FullscreenDisplay from "./FullscreenDisplay";
 import "./event-live.css";
 
 const TractorRun = dynamic(() => import("./TractorRun"), { ssr: false });
@@ -54,7 +55,6 @@ const eventId = process.env.NEXT_PUBLIC_EVENT_ID || "1";
 export default function EventLive({ view = "home" }: { view?: string }) {
   const [data, setData] = useState<LiveEvent | null>(null),
     [error, setError] = useState(""),
-    [updated, setUpdated] = useState(0),
     [now, setNow] = useState(Date.now()),
     [offset, setOffset] = useState(0);
   const [game, setGame] = useState(false),
@@ -76,7 +76,6 @@ export default function EventLive({ view = "home" }: { view?: string }) {
         if (active) {
           setData(next);
           setOffset(new Date(next.server_time).getTime() - Date.now());
-          setUpdated(Date.now());
           setError("");
         }
       } catch {
@@ -107,7 +106,6 @@ export default function EventLive({ view = "home" }: { view?: string }) {
             setData((current) =>
               current ? { ...current, alerts: message.alerts } : current,
             );
-            setUpdated(Date.now());
           }
         } catch {
           /* HTTP polling repairs malformed or interrupted updates. */
@@ -197,12 +195,30 @@ export default function EventLive({ view = "home" }: { view?: string }) {
       p.team.toLowerCase().includes(search.toLowerCase()),
   );
   const judging = data.phase === "judging";
+  if (fullscreen)
+    return (
+      <FullscreenDisplay
+        countdown={countdown}
+        deadline={data.deadline}
+        finished={left === 0}
+        now={now + offset}
+        activities={activities}
+        judging={judging}
+        rooms={data.rooms}
+        presentations={presentations}
+        room={room}
+        alerts={data.alerts}
+        eventId={eventId}
+        error={error}
+        pushStatus={push}
+        onEnablePush={subscribe}
+      />
+    );
   return (
     <main className={`farm-live ${fullscreen ? "farm-screen" : ""}`}>
       <header>
         <Link href="/" className="farm-brand">
           <img src="/hackeps/isotip.svg" alt="HackEPS" width={75} height={48} />
-          <span>EN DIRECTE</span>
         </Link>
         {!fullscreen && (
           <nav aria-label="Navegació">
@@ -245,10 +261,11 @@ export default function EventLive({ view = "home" }: { view?: string }) {
             )}
           </section>
         )}
-        <div className="farm-status" role="status">
-          {error || "En directe · avisos instantanis i actualització cada 3 s"}
-          {updated > 0 && ` · ${new Date(updated).toLocaleTimeString("ca-ES")}`}
-        </div>
+        {error && (
+          <p className="farm-status" role="status">
+            {error}
+          </p>
+        )}
         <AlertCenter
           alerts={data.alerts}
           eventId={eventId}
@@ -265,12 +282,11 @@ export default function EventLive({ view = "home" }: { view?: string }) {
               className={`farm-hero ${fullscreen ? "" : "live-home-intro"}`}
             >
               <div>
-                <p className="farm-eyebrow">HACKEPS · {data.title}</p>
                 <h1>
                   {left === 0
                     ? "Temps de lliurament finalitzat"
                     : fullscreen
-                      ? "La hackató, en directe."
+                      ? "Temps per lliurar el projecte"
                       : data.title}
                 </h1>
                 <p>Temps restant per lliurar el projecte</p>

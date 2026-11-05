@@ -1,0 +1,220 @@
+.farm-live.minimal-screen {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(24px, 4vw, 64px);
+  padding-bottom: 72px;
+  background: #242424;
+  color: #eee;
+}
+.farm-live .screen-header {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+.farm-live .screen-header img {
+  width: 56px;
+  height: 36px;
+}
+.farm-live .screen-header span,
+.farm-live .screen-connection {
+  font-size: 14px;
+  color: #aaa;
+}
+.farm-live .screen-connection {
+  margin-left: auto;
+}
+.farm-live .screen-stage {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 0;
+}
+.farm-live .screen-stage h1 {
+  font-size: clamp(14px, 1.5vw, 24px);
+  font-weight: 400;
+  color: #bbb;
+  text-align: center;
+}
+.farm-live .screen-timer {
+  font-size: clamp(52px, 16vw, 280px);
+  line-height: 1.3;
+  font-weight: 700;
+  color: #ff7430;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.06em;
+}
+.farm-live .screen-timer.is-pending {
+  font-size: clamp(24px, 5vw, 64px);
+  text-align: center;
+}
+.farm-live .screen-deadline {
+  color: #999;
+  font-size: clamp(12px, 1.1vw, 18px);
+}
+.farm-live .screen-upcoming {
+  border-top: 1px solid #ffffff25;
+  padding-top: 28px;
+}
+.farm-live .screen-activity-grid,
+.farm-live .screen-room-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px 40px;
+}
+.farm-live .screen-upcoming h2 {
+  font-size: clamp(18px, 2vw, 30px);
+  margin: 8px 0;
+  line-height: 1.3;
+}
+.farm-live .screen-upcoming p {
+  color: #aaa;
+  font-size: clamp(13px, 1.2vw, 18px);
+}
+.farm-live .screen-time {
+  color: #ff7430;
+  font-size: clamp(16px, 1.5vw, 24px);
+}
+.farm-live .screen-room-grid h2 {
+  color: #ff7430;
+  font-size: clamp(16px, 1.4vw, 24px);
+}
+.farm-live .screen-turn {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 12px;
+  font-size: clamp(13px, 1.2vw, 20px);
+}
+.farm-live .screen-turn span {
+  color: #aaa;
+}
+.farm-live .screen-empty {
+  margin: 0;
+  text-align: center;
+}
+.farm-live .screen-tools {
+  position: fixed;
+  right: 20px;
+  bottom: 16px;
+  z-index: 20;
+}
+.farm-live .screen-settings-toggle {
+  display: flex;
+  padding: 8px;
+  margin-left: auto;
+  color: #eee;
+  background: transparent;
+  border: 0;
+  opacity: 0.5;
+  cursor: pointer;
+}
+.farm-live .screen-settings-toggle:hover,
+.farm-live .screen-settings-toggle:focus-visible {
+  opacity: 1;
+}
+.farm-live .screen-tools:not(.is-open) .live-notification-controls {
+  display: none;
+}
+.farm-live .screen-tools.is-open {
+  background: #242424;
+  padding: 12px;
+  border: 1px solid #ffffff30;
+}
+.farm-live .screen-options button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  background: transparent;
+  color: #eee;
+  border: 1px solid #ffffff40;
+  cursor: pointer;
+}
+.farm-live .screen-options p {
+  font-size: 12px;
+  max-width: 300px;
+}
+.farm-live.minimal-screen .live-toast-stack {
+  bottom: 70px;
+}
+.farm-live .screen-parade {
+  position: fixed;
+  inset: auto 0 0;
+  height: 62px;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+.farm-live .screen-parade > div {
+  position: absolute;
+  left: -130px;
+  bottom: 2px;
+  opacity: 0;
+  animation: screen-parade-crossing 180s linear infinite;
+}
+.farm-live .screen-parade .screen-parade-tractor {
+  width: 100px;
+  animation-delay: 8s;
+}
+.farm-live .screen-parade .screen-parade-marraco {
+  width: 60px;
+  animation-delay: 98s;
+}
+.farm-live .screen-parade svg {
+  width: 100%;
+  height: 60px;
+}
+.farm-live .screen-parade img {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+}
+@keyframes screen-parade-crossing {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  6% {
+    transform: translateX(calc(100vw + 260px));
+    opacity: 1;
+  }
+  6.01%,
+  100% {
+    transform: translateX(calc(100vw + 260px));
+    opacity: 0;
+  }
+}
+@media (max-width: 600px) {
+  .farm-live .screen-activity-grid,
+  .farm-live .screen-room-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .farm-live .screen-stage {
+    padding: 40px 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .farm-live .screen-parade {
+    display: none;
+  }
+}
+
+.farm-live.minimal-screen section {
+  margin-bottom: 0;
+}
+.farm-live.minimal-screen h1 {
+  text-transform: none;
+  margin: 0;
+}
+.farm-live.minimal-screen h2 {
+  color: #eee;
+}
+
+.farm-live .screen-header img {
+  filter: brightness(0) invert(1);
+  opacity: 0.65;
+}

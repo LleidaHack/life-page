@@ -54,10 +54,9 @@ export default function LiveHomePanels({
           <Radio aria-hidden="true" />
           <span className="farm-eyebrow">Canal oficial</span>
         </div>
-        <h2 id="featured-title">HackEPS en directe</h2>
+        <h2 id="featured-title">Retransmissió</h2>
         {stream ? (
           <>
-            <p>Segueix les cerimònies i els moments de la hackató.</p>
             {embed ? (
               <iframe
                 title="Retransmissió de HackEPS"
