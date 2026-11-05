@@ -6,6 +6,7 @@ import AlertCenter, { type LiveAlert } from "./AlertCenter";
 import LiveHomePanels from "./LiveHomePanels";
 import FullscreenDisplay from "./FullscreenDisplay";
 import "./event-live.css";
+import "./live-home.css";
 
 const TractorRun = dynamic(() => import("./TractorRun"), { ssr: false });
 type Activity = {
@@ -215,7 +216,7 @@ export default function EventLive({ view = "home" }: { view?: string }) {
       />
     );
   return (
-    <main className={`farm-live ${fullscreen ? "farm-screen" : ""}`}>
+    <main className={`farm-live ${view === "home" ? "live-home" : ""}`}>
       <header>
         <Link href="/" className="farm-brand">
           <img src="/hackeps/isotip.svg" alt="HackEPS" width={75} height={48} />
@@ -232,7 +233,7 @@ export default function EventLive({ view = "home" }: { view?: string }) {
           </nav>
         )}
       </header>
-      {!fullscreen && (
+      {view !== "home" && (
         <div className="live-countdown-bar">
           <Link
             href="/fullscreen"
@@ -289,13 +290,23 @@ export default function EventLive({ view = "home" }: { view?: string }) {
                       ? "Temps per lliurar el projecte"
                       : data.title}
                 </h1>
-                <p>Temps restant per lliurar el projecte</p>
-                <div className="farm-countdown" aria-label="Temps restant">
+                <p>Temps per lliurar el projecte</p>
+                <Link
+                  href="/fullscreen"
+                  className="farm-countdown"
+                  aria-label="Temps restant. Obrir pantalla completa"
+                >
                   {countdown}
-                </div>
+                </Link>
                 {data.deadline && (
                   <small>
-                    Límit: {new Date(data.deadline).toLocaleString("ca-ES")}
+                    Límit:{" "}
+                    {new Date(data.deadline).toLocaleString("ca-ES", {
+                      day: "numeric",
+                      month: "long",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
                   </small>
                 )}
               </div>
@@ -354,8 +365,11 @@ export default function EventLive({ view = "home" }: { view?: string }) {
                 now={now + offset}
               />
             )}
-            <section>
-              <h2>Ara i a continuació</h2>
+            <section className="live-upcoming">
+              <div className="live-section-heading">
+                <h2>Ara i a continuació</h2>
+                <Link href="/schedule">Tota l’agenda ↗</Link>
+              </div>
               <div className="farm-grid">
                 {activities.slice(0, fullscreen ? 4 : 3).map((a) => (
                   <article key={a.id}>
@@ -515,18 +529,16 @@ export default function EventLive({ view = "home" }: { view?: string }) {
             className="farm-leaderboard"
             aria-labelledby="leaderboard-title"
           >
-            <p className="farm-eyebrow">EL RÀNQUING DE LA HACKEPS</p>
-            <h2 id="leaderboard-title">Classificació de LleidaCoins</h2>
+            <h2 id="leaderboard-title">LleidaCoins</h2>
             <p>
-              Ordenada pel saldo actual: els bescanvis resten i les correccions
-              s’hi reflecteixen. Els empats comparteixen posició.
+              Classificació per saldo disponible. Els empats comparteixen
+              posició.
             </p>
             {(data.leaderboard ?? []).length ? (
               <>
                 <table>
                   <caption className="farm-ranking-caption">
-                    {view === "home" ? "Top 10" : "Top 50"} · Actualització cada
-                    3 segons
+                    {view === "home" ? "Top 10" : "Top 50"}
                   </caption>
                   <thead>
                     <tr>

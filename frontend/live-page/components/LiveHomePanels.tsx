@@ -71,7 +71,7 @@ export default function LiveHomePanels({
             </a>
           </>
         ) : (
-          <p>La retransmissió es publicarà aquí quan estigui disponible.</p>
+          <p>Retransmissió no disponible.</p>
         )}
         <div className="live-next-event">
           <CalendarClock aria-hidden="true" />
@@ -103,8 +103,7 @@ export default function LiveHomePanels({
           </div>
           {data.wifi_name && <strong>{data.wifi_name}</strong>}
           <p className="live-preserve-lines">
-            {data.wifi_instructions ||
-              "Organització publicarà aquí les indicacions de connexió."}
+            {data.wifi_instructions || "Dades de connexió pendents."}
           </p>
           {data.wifi_guide_url && (
             <a
@@ -116,18 +115,14 @@ export default function LiveHomePanels({
               Com connectar-me al Wi-Fi?
             </a>
           )}
-          <p>
-            Si necessites ajuda, acosta’t a organització o escriu-nos per Slack.
-          </p>
+          <p>Necessites ajuda? Contacta amb organització.</p>
         </section>
         <section aria-labelledby="contact-title">
           <div className="live-panel-heading">
             <MessageCircle aria-hidden="true" />
             <h2 id="contact-title">Contacte</h2>
           </div>
-          <p>
-            Dubtes sobre un repte, els horaris o l’esdeveniment? Som a Slack.
-          </p>
+          <p>Parla amb organització a Slack.</p>
           {data.slack_url ? (
             <a
               className="farm-button"
@@ -138,7 +133,7 @@ export default function LiveHomePanels({
               Entrar a Slack ↗
             </a>
           ) : (
-            <p>Enllaç de Slack pendent de publicar.</p>
+            <p>Enllaç pendent de publicar.</p>
           )}
           <div className="live-socials">
             <a
