@@ -2,6 +2,8 @@
 import { useCallback, useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import AlertCenter, { type LiveAlert } from "./AlertCenter";
+import LiveHomePanels from "./LiveHomePanels";
 import "./event-live.css";
 
 const TractorRun = dynamic(() => import("./TractorRun"), { ssr: false });
@@ -23,6 +25,10 @@ type LiveEvent = {
   map_url: string | null;
   map_notes: string;
   slack_url: string | null;
+  stream_url?: string | null;
+  wifi_name?: string;
+  wifi_instructions?: string;
+  wifi_guide_url?: string | null;
   activities: Activity[];
   challenges: {
     id: string;
@@ -31,7 +37,7 @@ type LiveEvent = {
     resources: { title: string; url: string }[];
   }[];
   faqs: { question: string; answer: string }[];
-  alerts: { id: string; title: string; message: string; level: string }[];
+  alerts: LiveAlert[];
   rooms: { id: string; title: string; paused: boolean }[];
   presentations: {
     id: number;
@@ -210,6 +216,17 @@ export default function EventLive({ view = "home" }: { view?: string }) {
           </nav>
         )}
       </header>
+      {!fullscreen && (
+        <div className="live-countdown-bar">
+          <Link
+            href="/fullscreen"
+            aria-label="Temps de lliurament. Obrir pantalla completa"
+          >
+            <span>Temps per lliurar el projecte</span>
+            <strong>{countdown}</strong>
+          </Link>
+        </div>
+      )}
       <div className="farm-page-content">
         {view === "management" && (
           <section className="farm-management">
@@ -232,21 +249,29 @@ export default function EventLive({ view = "home" }: { view?: string }) {
           {error || "En directe · avisos instantanis i actualització cada 3 s"}
           {updated > 0 && ` · ${new Date(updated).toLocaleTimeString("ca-ES")}`}
         </div>
-        {data.alerts.map((a) => (
-          <aside role="alert" className={`farm-alert ${a.level}`} key={a.id}>
-            <strong>{a.title}</strong>
-            <p>{a.message}</p>
-          </aside>
-        ))}
+        <AlertCenter
+          alerts={data.alerts}
+          eventId={eventId}
+          onEnablePush={subscribe}
+        />
+        {push && (
+          <p className="live-push-status" role="status">
+            {push}
+          </p>
+        )}
         {(view === "home" || fullscreen) && (
           <>
-            <section className="farm-hero">
+            <section
+              className={`farm-hero ${fullscreen ? "" : "live-home-intro"}`}
+            >
               <div>
                 <p className="farm-eyebrow">HACKEPS · {data.title}</p>
                 <h1>
                   {left === 0
                     ? "Temps de lliurament finalitzat"
-                    : "La hackató, en directe."}
+                    : fullscreen
+                      ? "La hackató, en directe."
+                      : data.title}
                 </h1>
                 <p>Temps restant per lliurar el projecte</p>
                 <div className="farm-countdown" aria-label="Temps restant">
@@ -306,6 +331,13 @@ export default function EventLive({ view = "home" }: { view?: string }) {
                 </button>
               </div>
             </section>
+            {view === "home" && (
+              <LiveHomePanels
+                data={data}
+                next={activities[0]}
+                now={now + offset}
+              />
+            )}
             <section>
               <h2>Ara i a continuació</h2>
               <div className="farm-grid">
@@ -545,8 +577,7 @@ export default function EventLive({ view = "home" }: { view?: string }) {
               Entrar a Slack ↗
             </a>
           )}
-          <button onClick={subscribe}>Activar avisos</button>
-          <p role="status">{push}</p>
+
           <p>HackEPS · LleidaHack · Escola Politècnica Superior</p>
         </footer>
       )}
