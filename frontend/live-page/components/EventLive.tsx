@@ -15,6 +15,7 @@ type Activity = {
 };
 type LiveEvent = {
   title: string;
+  leaderboard?: { rank: number; nickname: string; balance: number }[];
   phase: string;
   deadline: string | null;
   server_time: string;
@@ -202,6 +203,7 @@ export default function EventLive({ view = "home" }: { view?: string }) {
             <Link href="/schedule">Agenda</Link>
             <Link href="/map">Mapa</Link>
             <Link href="/help">Ajuda</Link>
+            <Link href="/leaderboard">LleidaCoins</Link>
             {judging && <Link href="/judging">Presentacions</Link>}
             <Link href="/fullscreen">Pantalla</Link>
           </nav>
@@ -424,6 +426,73 @@ export default function EventLive({ view = "home" }: { view?: string }) {
                 </article>
               ))}
           </div>
+        </section>
+      )}
+      {(view === "home" || view === "leaderboard") && (
+        <section
+          className="farm-leaderboard"
+          aria-labelledby="leaderboard-title"
+        >
+          <p className="farm-eyebrow">LA COLLITA DE LLEIDACOINS</p>
+          <h2 id="leaderboard-title">Classificació de LleidaCoins</h2>
+          <p>
+            Ordenada pel saldo actual: els bescanvis resten i les correccions
+            s’hi reflecteixen. Els empats comparteixen posició.
+          </p>
+          {(data.leaderboard ?? []).length ? (
+            <>
+              <table>
+                <caption className="farm-ranking-caption">
+                  {view === "home" ? "Top 10" : "Top 50"} · Actualització cada 3
+                  segons
+                </caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Posició</th>
+                    <th scope="col">Hacker</th>
+                    <th scope="col" aria-label="Saldo en LleidaCoins">
+                      Saldo
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(data.leaderboard ?? [])
+                    .slice(0, view === "home" ? 10 : 50)
+                    .map((entry, index) => (
+                      <tr
+                        key={`${entry.nickname}-${index}`}
+                        className={entry.rank <= 3 ? "farm-podium" : ""}
+                      >
+                        <td>
+                          <span aria-hidden="true">
+                            {entry.rank === 1
+                              ? "🥇 "
+                              : entry.rank === 2
+                                ? "🥈 "
+                                : entry.rank === 3
+                                  ? "🥉 "
+                                  : ""}
+                          </span>
+                          {entry.rank}
+                        </td>
+                        <th scope="row">{entry.nickname}</th>
+                        <td>{entry.balance.toLocaleString("ca-ES")}</td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+              {view === "home" && (
+                <Link className="farm-button" href="/leaderboard">
+                  Veure la classificació →
+                </Link>
+              )}
+            </>
+          ) : (
+            <p className="farm-ranking-empty">
+              La collita encara no ha començat. Participa en activitats per
+              aconseguir les primeres LleidaCoins!
+            </p>
+          )}
         </section>
       )}
       {view === "judging" && !judging && (

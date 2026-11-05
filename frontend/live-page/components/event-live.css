@@ -239,3 +239,40 @@
     letter-spacing: -2px;
   }
 }
+
+.farm-leaderboard table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  table-layout: fixed;
+}
+.farm-leaderboard th,
+.farm-leaderboard td {
+  padding: 1rem 0.5rem;
+  border-bottom: 1px solid #b7c4a6;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+.farm-leaderboard th:first-child,
+.farm-leaderboard td:first-child {
+  width: 25%;
+}
+.farm-leaderboard th:last-child,
+.farm-leaderboard td:last-child {
+  text-align: right;
+  width: 28%;
+  font-variant-numeric: tabular-nums;
+}
+.farm-leaderboard .farm-podium {
+  background: #f5e7ad;
+}
+.farm-ranking-caption {
+  text-align: left;
+  padding-bottom: 0.75rem;
+  font-size: 0.85rem;
+}
+.farm-ranking-empty {
+  padding: 1.5rem;
+  border: 1px dashed #b7c4a6;
+  border-radius: 1rem;
+}
