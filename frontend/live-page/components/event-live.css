@@ -1,0 +1,241 @@
+.farm-live {
+  --ink: #203b2d;
+  --paper: #faf4df;
+  --orange: #d94b25;
+  min-height: 100vh;
+  background: var(--paper);
+  color: var(--ink);
+  padding: 28px clamp(20px, 5vw, 90px);
+  font-family: Arial, sans-serif;
+}
+.farm-live header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  border-bottom: 2px solid var(--ink);
+  padding-bottom: 22px;
+}
+.farm-brand {
+  font-size: 28px;
+  font-weight: 900;
+  letter-spacing: -1px;
+  text-decoration: none;
+}
+.farm-brand span {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 2px;
+}
+.farm-live nav {
+  display: flex;
+  gap: 22px;
+  flex-wrap: wrap;
+  font-weight: 700;
+}
+.farm-live a:hover {
+  text-decoration: underline;
+}
+.farm-status {
+  font-size: 12px;
+  margin-top: 14px;
+  opacity: 0.8;
+}
+.farm-hero {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  align-items: center;
+  gap: 35px;
+  padding: 50px 0;
+}
+.farm-eyebrow {
+  letter-spacing: 2px;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--orange);
+}
+.farm-live h1 {
+  font-size: clamp(36px, 5vw, 76px);
+  font-weight: 900;
+  line-height: 1.03;
+  letter-spacing: -2px;
+  max-width: 800px;
+  margin: 20px 0;
+}
+.farm-live h2 {
+  font-size: 28px;
+  font-weight: 800;
+  margin: 22px 0;
+}
+.farm-live h3 {
+  font-size: 21px;
+  font-weight: 800;
+  margin: 10px 0;
+}
+.farm-countdown {
+  font-size: clamp(42px, 7vw, 100px);
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -3px;
+  line-height: 1.3;
+}
+.farm-live p {
+  line-height: 1.6;
+  margin: 8px 0;
+}
+.farm-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 18px;
+}
+.farm-grid article {
+  border: 1px solid #bcc9ad;
+  border-radius: 16px;
+  padding: 24px;
+  background: #fffdf3;
+}
+.farm-live section {
+  margin-bottom: 32px;
+}
+.farm-tractor {
+  border: 0 !important;
+  background: transparent !important;
+  padding: 0 !important;
+  transform: rotate(-4deg);
+  max-width: 440px;
+}
+.farm-tractor svg {
+  width: 100%;
+}
+.farm-live button,
+.farm-button {
+  display: inline-block;
+  border: 1px solid var(--ink);
+  border-radius: 8px;
+  padding: 12px 18px;
+  background: var(--ink);
+  color: var(--paper);
+  cursor: pointer;
+  font-weight: 700;
+}
+.farm-live footer {
+  margin-top: 48px;
+  border-top: 1px solid #bcc9ad;
+  padding-top: 24px;
+}
+.farm-live footer button {
+  margin-left: 15px;
+}
+.farm-alert {
+  padding: 16px 22px;
+  margin-top: 18px;
+  border-radius: 10px;
+  background: #f5d56b;
+}
+.farm-alert.danger {
+  background: #a72b1d;
+  color: white;
+}
+.farm-alert strong {
+  font-size: 20px;
+}
+.farm-live input {
+  border: 1px solid #789078;
+  border-radius: 8px;
+  padding: 12px;
+  background: white;
+  margin-bottom: 18px;
+}
+.farm-map {
+  max-width: 100%;
+  border-radius: 16px;
+  max-height: 75vh;
+  object-fit: contain;
+}
+.farm-live details {
+  border-bottom: 1px solid #bcc9ad;
+  padding: 20px 0;
+}
+.farm-live summary {
+  cursor: pointer;
+  font-size: 20px;
+  font-weight: 700;
+}
+.farm-turn {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  border-top: 1px solid #bcc9ad;
+  padding: 14px 0;
+}
+.farm-turn.presenting,
+.farm-turn.called {
+  background: #e3edbe;
+  padding: 15px;
+  border-radius: 8px;
+}
+.farm-fullscreen {
+  position: fixed;
+  bottom: 12px;
+  right: 12px;
+  opacity: 0.7;
+}
+.farm-screen .farm-countdown {
+  font-size: clamp(72px, 10vw, 150px);
+}
+.farm-screen .farm-hero {
+  padding: 24px 0;
+}
+.tractor-overlay {
+  position: fixed;
+  inset: 0;
+  background: #14291fee;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  gap: 10px;
+}
+.tractor-overlay canvas {
+  max-height: 70vh;
+  max-width: 95vw;
+  border-radius: 20px;
+  touch-action: none;
+}
+.tractor-controls {
+  display: flex;
+  gap: 20px;
+}
+@media (max-width: 700px) {
+  .farm-live header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .farm-live nav {
+    gap: 14px;
+    font-size: 14px;
+  }
+  .farm-hero {
+    grid-template-columns: 1fr;
+    padding: 30px 0;
+    gap: 0;
+  }
+  .farm-tractor {
+    max-width: 230px;
+    justify-self: end;
+  }
+  .farm-live h1 {
+    letter-spacing: -1px;
+  }
+  .farm-grid {
+    grid-template-columns: 1fr;
+  }
+  .farm-live footer button {
+    margin: 10px 0;
+  }
+  .farm-countdown {
+    letter-spacing: -2px;
+  }
+}
