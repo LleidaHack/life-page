@@ -122,7 +122,7 @@ export default function LiveHomePanels({
             <MessageCircle aria-hidden="true" />
             <h2 id="contact-title">Contacte</h2>
           </div>
-          <p>Parla amb organització a Slack.</p>
+          <p>Parla amb organització a Discord.</p>
           {data.slack_url ? (
             <a
               className="farm-button"
@@ -130,7 +130,7 @@ export default function LiveHomePanels({
               target="_blank"
               rel="noreferrer"
             >
-              Entrar a Slack ↗
+              Entrar a Discord ↗
             </a>
           ) : (
             <p>Enllaç pendent de publicar.</p>

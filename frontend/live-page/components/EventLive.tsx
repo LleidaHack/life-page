@@ -64,6 +64,14 @@ export default function EventLive({ view = "home" }: { view?: string }) {
     [search, setSearch] = useState(""),
     [push, setPush] = useState("");
   const [room, setRoom] = useState("");
+  const [footerHeight, setFooterHeight] = useState(0);
+  const measureFooter = useCallback((node: HTMLElement | null) => {
+    if (!node) return;
+    const observer = new ResizeObserver(() => setFooterHeight(node.getBoundingClientRect().height));
+    observer.observe(node);
+    setFooterHeight(node.getBoundingClientRect().height);
+    return () => observer.disconnect();
+  }, []);
   const closeGame = useCallback(() => setGame(false), []);
   useEffect(() => {
     setRoom(new URLSearchParams(window.location.search).get("room") || "");
@@ -217,7 +225,7 @@ export default function EventLive({ view = "home" }: { view?: string }) {
       />
     );
   return (
-    <main className={`farm-live ${view === "home" ? "live-home" : ""}`}>
+    <main className={`farm-live ${view === "home" ? "live-home" : ""}`} style={{ paddingBottom: footerHeight }}>
       <header>
         <Link href="/" className="farm-brand">
           <img src="/hackeps/isotip.svg" alt="HackEPS" width={75} height={48} />
@@ -274,11 +282,7 @@ export default function EventLive({ view = "home" }: { view?: string }) {
               className={`farm-hero ${fullscreen ? "" : "live-home-intro"}`}
             >
               <div>
-                <h1>
-                  {left === 0
-                    ? "Temps de lliurament finalitzat"
-                    : data.title}
-                </h1>
+                {left === 0 && <h1>Temps de lliurament finalitzat</h1>}
                 <Link
                   href="/fullscreen"
                   className="farm-countdown"
@@ -550,7 +554,7 @@ export default function EventLive({ view = "home" }: { view?: string }) {
         )}
       </div>
       {!fullscreen && (
-        <footer>
+        <footer ref={measureFooter}>
           {data.slack_url && (
             <a
               className="farm-button"
@@ -558,7 +562,7 @@ export default function EventLive({ view = "home" }: { view?: string }) {
               target="_blank"
               rel="noreferrer"
             >
-              Entrar a Slack ↗
+              Entrar a Discord ↗
             </a>
           )}
 
