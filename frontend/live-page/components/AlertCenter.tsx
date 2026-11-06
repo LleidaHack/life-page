@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Bell, Volume2, VolumeX, X } from "lucide-react";
+import ScreenAnnouncement from "./ScreenAnnouncement";
 
 export type LiveAlert = {
   id: string;
@@ -44,11 +45,13 @@ export default function AlertCenter({
   eventId,
   onEnablePush,
   showControls = true,
+  projection = false,
 }: {
   alerts: LiveAlert[];
   eventId: string;
   onEnablePush: () => void;
   showControls?: boolean;
+  projection?: boolean;
 }) {
   const [visible, setVisible] = useState<LiveAlert[]>([]);
   const [enabled, setEnabled] = useState(
@@ -101,19 +104,22 @@ export default function AlertCenter({
         /* Session-only fallback. */
       }
       if (!show || !fresh.length) return;
-      const notifications = fresh.slice(-3);
-      setVisible((current) =>
-        [...notifications.reverse(), ...current].slice(0, 3),
-      );
-      playTone();
+      if (projection) {
+        setVisible((current) => [...current, ...fresh]);
+      } else {
+        const notifications = fresh.slice(-3);
+        setVisible((current) => [...notifications.reverse(), ...current].slice(0, 3));
+        playTone();
+      }
     },
-    [dismiss, storageKey],
+    [dismiss, storageKey, projection],
   );
 
   useEffect(() => {
     receive(alerts, true);
   }, [alerts, receive]);
   useEffect(() => {
+    if (projection) return;
     visible.forEach((alert) => {
       if (!timers.current.has(alert.id))
         timers.current.set(
@@ -121,7 +127,7 @@ export default function AlertCenter({
           setTimeout(() => dismiss(alert.id), DISPLAY_MS),
         );
     });
-  }, [visible, dismiss]);
+  }, [visible, dismiss, projection]);
   useEffect(() => {
     const timerMap = timers.current;
     const onMessage = (event: MessageEvent) => {
@@ -177,7 +183,9 @@ export default function AlertCenter({
         </button>
         {audioError && <span role="status">{audioError}</span>}
       </div>}
-      <div
+      {projection ? (
+        visible[0] && <ScreenAnnouncement key={visible[0].id} alert={visible[0]} onDismiss={dismiss} onShow={playTone} />
+      ) : <div
         className="live-notification-stack"
         aria-live="polite"
         aria-relevant="additions"
@@ -205,7 +213,7 @@ export default function AlertCenter({
             </button>
           </div>
         ))}
-      </div>
+      </div>}
     </>
   );
 }

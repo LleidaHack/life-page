@@ -222,6 +222,7 @@ export default function FullscreenDisplay({
           </div>
         )}
         <AlertCenter
+          projection
           alerts={alerts}
           eventId={eventId}
           onEnablePush={onEnablePush}

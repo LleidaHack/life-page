@@ -266,3 +266,84 @@
   .farm-live .screen-timer { font-size: min(14vw, 29vh); line-height: 1.1; }
   .farm-live .screen-upcoming { padding-top: 16px; }
 }
+
+.screen-announcement-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: clamp(16px, 4vw, 64px);
+  background: #161616b8;
+}
+.farm-live .screen-announcement {
+  --announcement-accent: #ff7430;
+  position: relative;
+  width: min(1400px, 92vw);
+  margin: 0;
+  background: #fff8ef;
+  color: #2e2e2e;
+  border: 3px solid var(--announcement-accent);
+  border-radius: 12px;
+  box-shadow: 0 24px 100px #0006;
+  overflow: hidden;
+}
+.screen-announcement.warning { --announcement-accent: #b76a00; }
+.screen-announcement.danger { --announcement-accent: #c53631; }
+.screen-announcement-content {
+  padding: clamp(24px, 5vw, 80px);
+  max-height: 78dvh;
+  overflow-y: auto;
+}
+.screen-announcement-icon { width: 40px; height: 40px; color: var(--announcement-accent); margin-bottom: 20px; }
+.farm-live.minimal-screen .screen-announcement h2 {
+  color: #2e2e2e;
+  font-size: clamp(26px, 4vw, 68px);
+  line-height: 1.15;
+  margin: 0 0 24px;
+  text-transform: none;
+  overflow-wrap: anywhere;
+}
+.farm-live .screen-announcement p {
+  color: #2e2e2e;
+  font-size: clamp(20px, 2.5vw, 42px);
+  line-height: 1.5;
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.farm-live .screen-announcement-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: grid;
+  place-items: center;
+  padding: 8px;
+  background: transparent;
+  color: #2e2e2e;
+  border: 0;
+  box-shadow: none;
+}
+.screen-announcement-progress { height: 10px; background: #2e2e2e20; }
+.screen-announcement-progress > div {
+  height: 100%;
+  background: var(--announcement-accent);
+  transform-origin: left;
+  animation: screen-announcement-countdown var(--announcement-duration) linear forwards;
+}
+@keyframes screen-announcement-countdown { from { transform: scaleX(1); } to { transform: scaleX(0); } }
+
+.screen-announcement-page { display: block; margin-top: 20px; color: #666; font-size: 14px; }
+@media (prefers-reduced-motion: reduce) {
+  .screen-announcement-progress > div {
+    animation-duration: var(--announcement-duration) !important;
+    animation-timing-function: steps(15, end) !important;
+  }
+}
+
+@media (min-width: 701px) and (max-height: 850px) {
+  .screen-announcement-content { padding: 24px 40px; }
+  .screen-announcement-icon { width: 28px; height: 28px; margin-bottom: 12px; }
+  .farm-live.minimal-screen .screen-announcement h2 { font-size: 36px; margin-bottom: 16px; }
+  .farm-live .screen-announcement p { font-size: 26px; }
+}
