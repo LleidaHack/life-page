@@ -675,3 +675,17 @@
     animation: none;
   }
 }
+
+.farm-grid.farm-challenges-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+@media (max-width: 1023px) {
+  .farm-grid.farm-challenges-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 600px) {
+  .farm-grid.farm-challenges-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

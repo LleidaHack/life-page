@@ -359,7 +359,7 @@ export default function EventLive({ view = "home" }: { view?: string }) {
           <section>
             <p className="farm-eyebrow">TRIA EL TEU TERRENY</p>
             <h1>Els reptes</h1>
-            <div className="farm-grid">
+            <div className="farm-grid farm-challenges-grid">
               {data.challenges.map((c) => (
                 <article key={c.id}>
                   <h2>{c.title}</h2>
