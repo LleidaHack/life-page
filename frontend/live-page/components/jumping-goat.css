@@ -92,9 +92,12 @@
   .jumping-goat, .goat-flyby { display: none; }
 }
 
-.farm-live button.jumping-goat-character, .farm-live button.goat-flyby {
+.farm-live button.jumping-goat-character, .farm-live button.goat-flyby,
+.farm-live button.jumping-goat-character:is(:hover, :active, :focus),
+.farm-live button.goat-flyby:is(:hover, :active, :focus) {
   padding: 0; margin: 0; border: 0; background: none; box-shadow: none;
   display: block; line-height: 0; pointer-events: auto; cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 .jumping-goat-character img { width: 100%; height: auto; display: block; }
 .jumping-goat-character:hover, .goat-flyby:hover { animation-play-state: paused; }
