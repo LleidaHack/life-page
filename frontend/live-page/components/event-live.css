@@ -450,9 +450,8 @@
 .live-countdown-bar {
   display: flex;
   justify-content: center;
-  background: var(--orange);
-  border-bottom: 2px solid var(--ink);
-  padding: 0 20px 18px;
+  background: transparent;
+  padding: 24px 20px 0;
 }
 .live-countdown-bar a {
   display: flex;
