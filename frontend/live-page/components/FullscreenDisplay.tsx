@@ -71,12 +71,8 @@ export default function FullscreenDisplay({
           </p>
         )}
       </div>
-      <section className="screen-stage" aria-labelledby="screen-timer-label">
-        <h1 id="screen-timer-label">
-          {finished
-            ? "Temps de lliurament finalitzat"
-            : "Temps per lliurar el projecte"}
-        </h1>
+      <section className="screen-stage" aria-label="Compte enrere">
+        {finished && <h1>Temps de lliurament finalitzat</h1>}
         <div className={`screen-timer ${deadline ? "" : "is-pending"}`}>
           {countdown}
         </div>

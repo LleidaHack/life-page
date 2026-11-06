@@ -277,11 +277,8 @@ export default function EventLive({ view = "home" }: { view?: string }) {
                 <h1>
                   {left === 0
                     ? "Temps de lliurament finalitzat"
-                    : fullscreen
-                      ? "Temps per lliurar el projecte"
-                      : data.title}
+                    : data.title}
                 </h1>
-                <p>Temps per lliurar el projecte</p>
                 <Link
                   href="/fullscreen"
                   className="farm-countdown"
