@@ -1,6 +1,7 @@
 "use client";
 import JumpingGoat from "./JumpingGoat";
 import WalkingHen from "./WalkingHen";
+import WalkingPig from "./WalkingPig";
 
 import { useState } from "react";
 import Link from "next/link";
@@ -66,6 +67,7 @@ export default function FullscreenDisplay({
     <main className={`farm-live minimal-screen ${judging ? "is-judging" : ""}`}>
       <JumpingGoat />
       <WalkingHen />
+      <WalkingPig />
       <div className="screen-header">
         <Link href="/" aria-label="Tornar a HackEPS Live">
           <img src="/hackeps/isotip.svg" width={56} height={36} alt="HackEPS" />

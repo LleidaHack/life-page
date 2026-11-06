@@ -1,6 +1,7 @@
 "use client";
 import JumpingGoat from "./JumpingGoat";
 import WalkingHen from "./WalkingHen";
+import WalkingPig from "./WalkingPig";
 import { useCallback, useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
@@ -249,6 +250,7 @@ export default function EventLive({ view = "home" }: { view?: string }) {
     <main className={`farm-live ${view === "home" ? "live-home" : ""}`}>
       <JumpingGoat />
       <WalkingHen />
+      <WalkingPig />
       <header>
         <Link href="/" className="farm-brand">
           <img src="/hackeps/isotip.svg" alt="HackEPS" width={75} height={48} />
