@@ -1,5 +1,5 @@
 .goat-game-overlay { position: fixed; inset: 0; z-index: 1100; display: grid; place-items: center; padding: 12px; background: #171717d9; }
-.farm-live .goat-game { margin: 0; width: min(390px, 100%); max-height: calc(100dvh - 24px); overflow-y: auto; background: #fff8ed; color: #2e2e2e; border: 3px solid #2e2e2e; border-radius: 8px; padding: 12px; box-shadow: 6px 6px 0 #ff7430; }
+.farm-live .goat-game-overlay .goat-game { margin: 0; width: min(390px, 100%); max-height: calc(100dvh - 24px); overflow-y: auto; background: #fff8ed; color: #2e2e2e; border: 3px solid #2e2e2e; border-radius: 8px; padding: 12px; box-shadow: 6px 6px 0 #ff7430; }
 .goat-game-heading, .goat-game-score { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .farm-live .goat-game-heading h2 { font-size: 22px; margin: 0; text-transform: none; color: #2e2e2e; }
 .farm-live .goat-game button { background: #ff7430; color: #2e2e2e; border: 2px solid #2e2e2e; border-radius: 4px; padding: 6px 16px; cursor: pointer; font-weight: 700; touch-action: none; }
