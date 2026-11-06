@@ -290,9 +290,11 @@
 }
 .farm-leaderboard {
   padding: clamp(20px, 4vw, 40px);
-  background: #2e2e2e;
-  color: white;
+  background: #fff;
+  color: var(--ink);
+  border: 2px solid var(--ink);
   border-radius: 5px;
+  box-shadow: 4px 4px 0 var(--ink);
 }
 .farm-leaderboard .farm-eyebrow {
   color: var(--orange);
@@ -308,7 +310,7 @@
   padding: 16px 12px;
   text-align: left;
   overflow-wrap: anywhere;
-  border-bottom: 1px solid #666;
+  border-bottom: 1px solid #2e2e2e26;
 }
 .farm-leaderboard thead {
   background: var(--orange);
@@ -323,10 +325,13 @@
   font-variant-numeric: tabular-nums;
 }
 .farm-leaderboard .farm-podium {
-  background: #3c3c3c;
+  background: #fff0e6;
+}
+.farm-leaderboard tbody tr:hover {
+  background: #eaf5fd;
 }
 .farm-leaderboard .farm-podium td:last-child {
-  color: #ffa16f;
+  color: #923a0b;
   font-weight: 700;
 }
 .farm-ranking-caption {
