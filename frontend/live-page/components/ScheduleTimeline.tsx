@@ -27,11 +27,15 @@ export default function ScheduleTimeline({
   activities: Activity[];
   now: number;
 }) {
-  if (!activities.length) return <p>No hi ha més activitats programades.</p>;
+  const upcoming = activities
+    .filter((activity) => Date.parse(activity.end) > now)
+    .sort((a, b) => Date.parse(a.start) - Date.parse(b.start));
+
+  if (!upcoming.length) return <p>No hi ha més activitats programades.</p>;
 
   return (
     <ol className="schedule-timeline">
-      {[...activities].sort((a, b) => Date.parse(a.start) - Date.parse(b.start)).map((activity, index) => {
+      {upcoming.map((activity, index) => {
         const active = Date.parse(activity.start) <= now && now < Date.parse(activity.end);
         return (
           <li key={activity.id} className="schedule-timeline-item" aria-current={active ? "step" : undefined}>
