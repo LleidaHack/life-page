@@ -234,17 +234,6 @@ export default function EventLive({ view = "home" }: { view?: string }) {
           </nav>
         )}
       </header>
-      {view !== "home" && (
-        <div className="live-countdown-bar">
-          <Link
-            href="/fullscreen"
-            aria-label="Temps de lliurament. Obrir pantalla completa"
-          >
-            <span>Temps per lliurar el projecte</span>
-            <strong>{countdown}</strong>
-          </Link>
-        </div>
-      )}
       <div className="farm-page-content">
         {view === "management" && (
           <section className="farm-management">
