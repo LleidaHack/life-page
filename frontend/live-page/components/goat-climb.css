@@ -1,0 +1,14 @@
+.goat-game-overlay { position: fixed; inset: 0; z-index: 1100; display: grid; place-items: center; padding: 12px; background: #171717d9; }
+.farm-live .goat-game { margin: 0; width: min(390px, 100%); max-height: calc(100dvh - 24px); overflow-y: auto; background: #fff8ed; color: #2e2e2e; border: 3px solid #2e2e2e; border-radius: 8px; padding: 12px; box-shadow: 6px 6px 0 #ff7430; }
+.goat-game-heading, .goat-game-score { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.farm-live .goat-game-heading h2 { font-size: 22px; margin: 0; text-transform: none; color: #2e2e2e; }
+.farm-live .goat-game button { background: #ff7430; color: #2e2e2e; border: 2px solid #2e2e2e; border-radius: 4px; padding: 6px 16px; cursor: pointer; font-weight: 700; touch-action: none; }
+.farm-live .goat-game button:focus-visible { outline: 3px solid #2676b2; outline-offset: 2px; }
+.goat-game-score { margin: 8px 0; font-size: 14px; }
+.goat-game-board { position: relative; margin: auto; width: min(100%, calc((100dvh - 205px) * .643)); }
+.goat-game-board canvas { display: block; width: 100%; height: auto; aspect-ratio: 360 / 560; border: 2px solid #2e2e2e; border-radius: 3px; }
+.goat-game-result { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; background: #fff8edde; }
+.farm-live .goat-game-result h3 { color: #2e2e2e; font-size: 26px; margin: 0; }
+.goat-game-controls { display: flex; gap: 12px; margin-top: 10px; }
+.farm-live .goat-game-controls button { flex: 1; min-height: 44px; font-size: 22px; padding: 2px; }
+.farm-live .goat-game-help { color: #555; font-size: 10px; text-align: center; margin: 8px 0 0; }
