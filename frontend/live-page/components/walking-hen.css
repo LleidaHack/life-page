@@ -1,0 +1,12 @@
+.hen-walk { position: absolute; inset: auto 24px 8px; height: 100px; pointer-events: none; z-index: 1; overflow: visible; }
+.walking-hen { --hen-direction: 1; position: absolute; bottom: 0; left: 5%; width: clamp(48px, 6vw, 76px); transform: translateX(-50%); }
+.walking-hen > img { display: block; width: 100%; height: auto; transform: scaleX(var(--hen-direction)); animation: hen-step .45s ease-in-out infinite alternate; }
+.walking-hen.is-laying > img { animation: hen-lay .6s ease-in-out 3; }
+.farm-live .hen-walk button.hen-egg,
+.farm-live .hen-walk button.hen-egg:is(:hover, :active, :focus) { position: absolute; bottom: 0; width: 44px; height: 44px; min-height: 44px; padding: 0; margin: 0; border: 0; background: transparent; box-shadow: none; transform: translateX(-50%); cursor: pointer; pointer-events: auto; -webkit-tap-highlight-color: transparent; }
+.hen-egg img { display: block; width: 30px; height: 34px; object-fit: contain; margin: auto; transition: transform .15s; }
+.hen-egg:hover img { transform: rotate(12deg) scale(1.1); }
+.hen-message { position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%); width: 150px; padding: 8px; border: 2px solid #2e2e2e; border-radius: 8px; background: #fff8ed; color: #2e2e2e; font-size: 12px; text-align: center; }
+@keyframes hen-step { from { transform: scaleX(var(--hen-direction)) rotate(-3deg); } to { transform: scaleX(var(--hen-direction)) translateY(-3px) rotate(3deg); } }
+@keyframes hen-lay { 50% { transform: scaleX(var(--hen-direction)) scaleY(.86); } }
+@media (prefers-reduced-motion: reduce) { .walking-hen > img, .walking-hen.is-laying > img { animation: none; } .hen-egg img { transition: none; } }
