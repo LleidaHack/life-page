@@ -1,10 +1,15 @@
 /* Public home layout, using the HackEPS edition palette and artwork. */
+.farm-live.live-home {
+  --home-gutter: clamp(20px, 4vw, 64px);
+}
 .farm-live.live-home > header {
   border-bottom: 0;
-  padding-inline: max(24px, calc((100vw - 1160px) / 2));
+  padding-inline: var(--home-gutter);
 }
 .live-home .farm-page-content {
-  max-width: 1280px;
+  width: 100%;
+  max-width: none;
+  padding-inline: var(--home-gutter);
   display: flex;
   flex-direction: column;
   padding-top: 0;
@@ -16,19 +21,13 @@
 .farm-live.live-home .live-home-intro {
   order: -2;
   grid-template-columns: 1fr 210px;
-  margin: 0 -64px 0;
-  padding: 36px 64px 40px;
+  margin: 0 calc(-1 * var(--home-gutter));
+  padding: 36px var(--home-gutter) 40px;
   background: var(--orange);
   position: relative;
   isolation: isolate;
 }
-.live-home-intro::before {
-  content: "";
-  position: absolute;
-  inset: 0 calc((1160px - 100vw) / 2);
-  background: var(--orange);
-  z-index: -1;
-}
+
 .farm-live.live-home .live-home-intro h1 {
   font-size: clamp(16px, 2vw, 24px);
   margin: 0 0 28px;
@@ -186,10 +185,6 @@
   padding-top: 12px;
 }
 @media (max-width: 900px) {
-  .farm-live.live-home .live-home-intro {
-    margin-inline: -4vw;
-    padding-inline: 4vw;
-  }
   .live-home .live-home-panels {
     grid-template-columns: 1fr;
   }
@@ -211,8 +206,7 @@
   }
   .farm-live.live-home .live-home-intro {
     grid-template-columns: 1fr 90px;
-    margin-inline: -20px;
-    padding: 24px 20px 32px;
+    padding: 24px var(--home-gutter) 32px;
     gap: 12px;
   }
   .farm-live.live-home .live-home-intro h1 {
