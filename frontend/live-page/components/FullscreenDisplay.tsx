@@ -61,7 +61,7 @@ export default function FullscreenDisplay({
     }
   }
   return (
-    <main className="farm-live minimal-screen">
+    <main className={`farm-live minimal-screen ${judging ? "is-judging" : ""}`}>
       <div className="screen-header">
         <Link href="/" aria-label="Tornar a HackEPS Live">
           <img src="/hackeps/isotip.svg" width={56} height={36} alt="HackEPS" />
@@ -86,7 +86,7 @@ export default function FullscreenDisplay({
           </p>
         )}
       </div>
-      <section className="screen-stage" aria-label="Compte enrere">
+      {!judging && <section className="screen-stage" aria-label="Compte enrere">
         {finished && <h1>Temps de lliurament finalitzat</h1>}
         <div className={`screen-timer ${deadline ? "" : "is-pending"}`}>
           {countdown}
@@ -104,12 +104,15 @@ export default function FullscreenDisplay({
             })}
           </p>
         )}
-      </section>
+      </section>}
       <section
         className={`screen-upcoming ${judging ? "is-judging" : ""}`}
         aria-label={judging ? "Torns de presentació" : "Pròximes activitats"}
       >
         {judging ? (
+          <>
+          <h1 className="screen-waiting-title">Sala d’espera · Judging</h1>
+          {!rooms.length && <p className="screen-empty" role="status">Els torns es publicaran aquí quan estiguin preparats.</p>}
           <div className="screen-room-grid">
             {rooms
               .filter((r) => !room || r.id === room)
@@ -119,7 +122,7 @@ export default function FullscreenDisplay({
                     (p) =>
                       p.room === r.id && !["done", "absent"].includes(p.state),
                   )
-                  .slice(0, 2);
+                  .slice(0, 5);
                 return (
                   <article key={r.id}>
                     <h2>
@@ -128,13 +131,13 @@ export default function FullscreenDisplay({
                     </h2>
                     {turns.length ? (
                       turns.map((p) => (
-                        <div className="screen-turn" key={p.id}>
+                        <div className={`screen-turn is-${p.state}`} key={p.id}>
                           <strong>{p.team}</strong>
                           <span>
                             {(
                               {
                                 presenting: "Presentant",
-                                called: "Vine a la sala",
+                                called: "Sala d’espera",
                                 postponed: "Ajornat",
                               } as Record<string, string>
                             )[p.state] ||
@@ -154,6 +157,7 @@ export default function FullscreenDisplay({
                 );
               })}
           </div>
+          </>
         ) : activities.length ? (
           <div className="screen-activity-grid">
             {activities.slice(0, 3).map((a) => (

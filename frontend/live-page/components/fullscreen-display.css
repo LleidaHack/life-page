@@ -347,3 +347,23 @@
   .farm-live.minimal-screen .screen-announcement h2 { font-size: 36px; margin-bottom: 16px; }
   .farm-live .screen-announcement p { font-size: 26px; }
 }
+
+.farm-live.minimal-screen.is-judging .screen-upcoming {
+  flex: 1;
+  border-top: 0;
+  padding-top: clamp(24px, 4vh, 48px);
+}
+.farm-live .screen-waiting-title {
+  color: #eee;
+  font-size: clamp(24px, 3vw, 48px);
+  margin: 0 0 clamp(24px, 4vh, 48px);
+}
+.farm-live.minimal-screen.is-judging .screen-room-grid article {
+  border-top: 2px solid #ff7430;
+  padding-top: 12px;
+}
+
+.farm-live .screen-turn.is-presenting strong,
+.farm-live .screen-turn.is-presenting span { color: #94cbf5; }
+.farm-live .screen-turn.is-called strong,
+.farm-live .screen-turn.is-called span { color: #ff9b65; }

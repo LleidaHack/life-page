@@ -205,7 +205,7 @@ export default function EventLive({ view = "home" }: { view?: string }) {
   const left = data.deadline
     ? Math.max(
         0,
-        Math.floor((new Date(data.deadline).getTime() - now - offset) / 1000),
+        Math.ceil((new Date(data.deadline).getTime() - now - offset) / 1000),
       )
     : null;
   const countdown =
@@ -222,7 +222,7 @@ export default function EventLive({ view = "home" }: { view?: string }) {
       (!room || p.room === room) &&
       p.team.toLowerCase().includes(search.toLowerCase()),
   );
-  const judging = data.phase === "judging";
+  const judging = data.phase === "judging" || (data.phase === "hacking" && left === 0);
   if (fullscreen)
     return (
       <FullscreenDisplay
@@ -296,7 +296,7 @@ export default function EventLive({ view = "home" }: { view?: string }) {
             {push}
           </p>
         )}
-        {(view === "home" || fullscreen) && (
+        {!judging && (view === "home" || fullscreen) && (
           <>
             <section
               className={`farm-hero ${fullscreen ? "" : "live-home-intro"}`}
@@ -412,8 +412,8 @@ export default function EventLive({ view = "home" }: { view?: string }) {
         )}
         {judging && (view === "judging" || view === "home" || fullscreen) && (
           <section>
-            <p className="farm-eyebrow">JUDGING TIME</p>
-            <h2>Presentacions en directe</h2>
+            <h1>Sala d’espera · Judging</h1>
+            {!data.rooms.length && <p role="status">Els torns es publicaran aquí quan estiguin preparats.</p>}
             {!fullscreen && (
               <input
                 aria-label="Cerca el teu equip"
@@ -443,7 +443,7 @@ export default function EventLive({ view = "home" }: { view?: string }) {
                           <span>
                             {{
                               waiting: "En espera",
-                              called: "Vine a la sala",
+                              called: "Sala d’espera",
                               presenting: "Presentant",
                               postponed: "Ajornat",
                             }[p.state as string] || p.state}
