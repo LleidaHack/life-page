@@ -469,10 +469,6 @@ export default function EventLive({ view = "home" }: { view?: string }) {
             aria-labelledby="leaderboard-title"
           >
             <h2 id="leaderboard-title">LleidaCoins</h2>
-            <p>
-              Classificació per saldo disponible. Els empats comparteixen
-              posició.
-            </p>
             {(data.leaderboard ?? []).length ? (
               <>
                 <table>
