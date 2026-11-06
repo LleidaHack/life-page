@@ -231,7 +231,7 @@ export default function EventLive({ view = "home" }: { view?: string }) {
             <Link href="/help">Ajuda</Link>
             <Link href="/leaderboard">LleidaCoins</Link>
             {judging && <Link href="/judging">Presentacions</Link>}
-            <Link href="/fullscreen">Pantalla</Link>
+            <Link href="/fullscreen">Pantalla completa</Link>
           </nav>
         )}
       </header>
