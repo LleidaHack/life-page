@@ -8,13 +8,15 @@ let retainedEggs: number[] = [];
 const MAX_EGGS = 10;
 const EGG_MESSAGE = ""; // Pending final event copy.
 
-export default function WalkingHen() {
+export default function WalkingHen({ active }: { active: boolean }) {
   const [eggs, setEggs] = useState<number[]>([]);
   const [laying, setLaying] = useState(false);
   const hen = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setEggs([...retainedEggs]);
+    setLaying(false);
+    if (!active) return;
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     let position = 5;
     let direction = 1;
@@ -49,7 +51,7 @@ export default function WalkingHen() {
       setEggs([...retainedEggs]);
     }, 100);
     return () => clearInterval(timer);
-  }, []);
+  }, [active]);
 
   function removeEgg(slot: number) {
     retainedEggs = retainedEggs.filter(value => value !== slot);
@@ -60,9 +62,9 @@ export default function WalkingHen() {
     {eggs.map(slot => <button key={slot} className="hen-egg" style={{ left: `${slot * 10 + 5}%` }} onClick={() => removeEgg(slot)} aria-label="Recollir l’ou">
       <img src="/hackeps/hen-egg.png" alt="" draggable={false} />
     </button>)}
-    <div ref={hen} className={`walking-hen${laying ? " is-laying" : ""}`} aria-hidden="true">
+    {active && <div ref={hen} className={`walking-hen${laying ? " is-laying" : ""}`} aria-hidden="true">
       {laying && EGG_MESSAGE && <span className="hen-message">{EGG_MESSAGE}</span>}
       <img src="/hackeps/walking-hen.png" alt="" draggable={false} />
-    </div>
+    </div>}
   </div>;
 }

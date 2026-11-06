@@ -1,8 +1,6 @@
 "use client";
-import JumpingGoat from "./JumpingGoat";
-import WalkingHen from "./WalkingHen";
-import WalkingPig from "./WalkingPig";
 
+import AmbientScenes from "./AmbientScenes";
 import { useState } from "react";
 import Link from "next/link";
 import { Maximize, Settings2 } from "lucide-react";
@@ -65,9 +63,7 @@ export default function FullscreenDisplay({
   }
   return (
     <main className={`farm-live minimal-screen ${judging ? "is-judging" : ""}`}>
-      <JumpingGoat />
-      <WalkingHen />
-      <WalkingPig />
+      <AmbientScenes fullscreen />
       <div className="screen-header">
         <Link href="/" aria-label="Tornar a HackEPS Live">
           <img src="/hackeps/isotip.svg" width={56} height={36} alt="HackEPS" />
@@ -183,32 +179,6 @@ export default function FullscreenDisplay({
           <p className="screen-empty">No hi ha més activitats programades.</p>
         )}
       </section>
-      <div className="screen-parade" aria-hidden="true">
-        <div className="screen-parade-tractor">
-          <svg viewBox="0 0 360 250">
-            <path d="M65 145V65H170V145H260L290 185H55Z" fill="#ff7430" />
-            <path d="M83 80H148V135H83Z" fill="#94cbf5" />
-            <path
-              d="M190 115V70H204V145"
-              fill="none"
-              stroke="#eee"
-              strokeWidth="12"
-            />
-            <circle cx="100" cy="190" r="48" fill="#111" />
-            <circle cx="100" cy="190" r="25" fill="#eee" />
-            <circle cx="260" cy="200" r="31" fill="#111" />
-            <circle cx="260" cy="200" r="15" fill="#eee" />
-          </svg>
-        </div>
-        <div className="screen-parade-marraco">
-          <img
-            src="/hackeps/marraco-hacker.webp"
-            alt=""
-            width={64}
-            height={64}
-          />
-        </div>
-      </div>
       <div className={`screen-tools ${toolsOpen ? "is-open" : ""}`}>
         <button
           className="screen-settings-toggle"
