@@ -6,7 +6,6 @@ import {
   Radio,
   Wifi,
   MessageCircle,
-  CalendarClock,
   Instagram,
   Linkedin,
 } from "lucide-react";
@@ -18,16 +17,11 @@ type HomeData = {
   wifi_guide_url?: string | null;
   slack_url: string | null;
 };
-type Activity = { title: string; start: string; end: string; location: string };
 
 export default function LiveHomePanels({
   data,
-  next,
-  now,
 }: {
   data: HomeData;
-  next?: Activity;
-  now: number;
 }) {
   const [embed, setEmbed] = useState("");
   const stream = data.stream_url;
@@ -73,27 +67,6 @@ export default function LiveHomePanels({
         ) : (
           <p>Retransmissió no disponible.</p>
         )}
-        <div className="live-next-event">
-          <CalendarClock aria-hidden="true" />
-          <div>
-            <span className="farm-eyebrow">
-              {next && Date.parse(next.start) <= now
-                ? "Ara mateix"
-                : "Pròxim esdeveniment"}
-            </span>
-            <h3>{next?.title || "Consulta l’agenda de la hackató"}</h3>
-            {next && (
-              <p>
-                {new Date(next.start).toLocaleTimeString("ca-ES", {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}{" "}
-                · {next.location}
-              </p>
-            )}
-            <Link href="/schedule">Veure tot l’horari →</Link>
-          </div>
-        </div>
       </section>
       <div className="live-information-grid">
         <section aria-labelledby="wifi-title">

@@ -345,22 +345,8 @@ export default function EventLive({ view = "home" }: { view?: string }) {
             </section>
             {view === "home" && <YouTubeBroadcast api={api} eventId={eventId} />}
             {view === "home" && (
-              <LiveHomePanels
-                data={data}
-                next={activities[0]}
-                now={now + offset}
-              />
+              <LiveHomePanels data={data} />
             )}
-            <section className="live-upcoming">
-              <div className="live-section-heading">
-                <h2>Ara i a continuació</h2>
-                <Link href="/schedule">Tota l’agenda ↗</Link>
-              </div>
-              <ScheduleTimeline
-                activities={activities.slice(0, fullscreen ? 4 : 3)}
-                now={now + offset}
-              />
-            </section>
           </>
         )}
         {view === "schedule" && (
@@ -478,7 +464,7 @@ export default function EventLive({ view = "home" }: { view?: string }) {
             </div>
           </section>
         )}
-        {(view === "home" || view === "leaderboard") && (
+        {view === "leaderboard" && (
           <section
             className="farm-leaderboard"
             aria-labelledby="leaderboard-title"
@@ -492,7 +478,7 @@ export default function EventLive({ view = "home" }: { view?: string }) {
               <>
                 <table>
                   <caption className="farm-ranking-caption">
-                    {view === "home" ? "Top 10" : "Top 50"}
+                    Top 50
                   </caption>
                   <thead>
                     <tr>
@@ -505,7 +491,7 @@ export default function EventLive({ view = "home" }: { view?: string }) {
                   </thead>
                   <tbody>
                     {(data.leaderboard ?? [])
-                      .slice(0, view === "home" ? 10 : 50)
+                      .slice(0, 50)
                       .map((entry, index) => (
                         <tr
                           key={`${entry.nickname}-${index}`}
@@ -529,11 +515,6 @@ export default function EventLive({ view = "home" }: { view?: string }) {
                       ))}
                   </tbody>
                 </table>
-                {view === "home" && (
-                  <Link className="farm-button" href="/leaderboard">
-                    Veure la classificació →
-                  </Link>
-                )}
               </>
             ) : (
               <p className="farm-ranking-empty">
