@@ -42,14 +42,13 @@ export default function LiveHomePanels({
     } else window.open(stream, "_blank", "noopener,noreferrer");
   }
   return (
-    <div className="live-home-panels">
-      <section className="live-featured" aria-labelledby="featured-title">
+    <div className={`live-home-panels ${stream ? "" : "without-stream"}`}>
+      {stream && <section className="live-featured" aria-labelledby="featured-title">
         <div className="live-panel-heading">
           <Radio aria-hidden="true" />
           <span className="farm-eyebrow">Canal oficial</span>
         </div>
         <h2 id="featured-title">Retransmissió</h2>
-        {stream ? (
           <>
             {embed ? (
               <iframe
@@ -64,10 +63,7 @@ export default function LiveHomePanels({
               Obrir el canal ↗
             </a>
           </>
-        ) : (
-          <p>Retransmissió no disponible.</p>
-        )}
-      </section>
+      </section>}
       <div className="live-information-grid">
         <section aria-labelledby="wifi-title">
           <div className="live-panel-heading">
