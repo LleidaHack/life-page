@@ -68,14 +68,13 @@ export default function FullscreenDisplay({
         </Link>
         {judging && <span>Presentacions</span>}
       {leaderboard.length > 0 && (
-        <section className="screen-podium" aria-labelledby="screen-podium-title">
-          <h2 id="screen-podium-title">LleidaCoins · Top 3</h2>
+        <section className="screen-podium" aria-label="Classificació de LleidaCoins">
           <ol>
             {leaderboard.slice(0, 3).map((entry, index) => (
               <li key={`${entry.nickname}-${index}`} className={index === 0 ? "is-leading" : ""}>
                 <span className="screen-podium-rank">{entry.rank === 1 ? "🥇" : entry.rank === 2 ? "🥈" : entry.rank === 3 ? "🥉" : entry.rank}<span className="sr-only">Posició {entry.rank}</span></span>
                 <strong>{entry.nickname}</strong>
-                <span className="screen-podium-balance">{entry.balance.toLocaleString("ca-ES")} <small>LC</small></span>
+                <span className="screen-podium-balance">{entry.balance.toLocaleString("ca-ES")} <small>LLC</small></span>
               </li>
             ))}
           </ol>
