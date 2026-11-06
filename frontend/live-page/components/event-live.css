@@ -694,3 +694,17 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+.live-push-invitation {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  background: white;
+  border: 2px solid var(--ink);
+  padding: 20px;
+  margin: 20px 0;
+}
+.live-push-invitation > div { flex: 1 1 280px; }
+.live-push-invitation p { margin: 6px 0 0; font-size: 13px; }
+.live-push-invitation button:disabled { opacity: .6; cursor: wait; }

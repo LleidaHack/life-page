@@ -5,6 +5,7 @@ import Link from "next/link";
 import AlertCenter, { type LiveAlert } from "./AlertCenter";
 import LiveHomePanels from "./LiveHomePanels";
 import YouTubeBroadcast from "./YouTubeBroadcast";
+import NotificationInvitation from "./NotificationInvitation";
 import ScheduleTimeline from "./ScheduleTimeline";
 import FullscreenDisplay from "./FullscreenDisplay";
 import "./event-live.css";
@@ -132,10 +133,13 @@ export default function EventLive({ view = "home" }: { view?: string }) {
   }, []);
   async function subscribe() {
     try {
-      if (!("serviceWorker" in navigator) || !("PushManager" in window))
+      if (!("Notification" in window) || !("serviceWorker" in navigator) || !("PushManager" in window))
         throw Error(
           "Afegeix el Live a la pantalla d’inici i obre’l per activar els avisos.",
         );
+      const permission = await Notification.requestPermission();
+      if (permission !== "granted")
+        throw Error("Permet les notificacions a la configuració del navegador per rebre avisos.");
       const { public_key } = await (
         await fetch(`${api}/v1/operations/${eventId}/push-key`)
       ).json();
@@ -164,10 +168,12 @@ export default function EventLive({ view = "home" }: { view?: string }) {
       );
       if (!response.ok) throw Error("No s’ha pogut activar la subscripció");
       setPush("Avisos activats!");
+      return true;
     } catch (e) {
       setPush(
         e instanceof Error ? e.message : "No s’han pogut activar els avisos",
       );
+      return false;
     }
   }
   const fullscreen = view === "fullscreen";
@@ -206,6 +212,7 @@ export default function EventLive({ view = "home" }: { view?: string }) {
         finished={left === 0}
         now={now + offset}
         activities={activities}
+        leaderboard={data.leaderboard ?? []}
         judging={judging}
         rooms={data.rooms}
         presentations={presentations}
@@ -258,6 +265,7 @@ export default function EventLive({ view = "home" }: { view?: string }) {
             {error}
           </p>
         )}
+        <NotificationInvitation api={api} eventId={eventId} onEnable={subscribe} />
         <AlertCenter
           alerts={data.alerts}
           eventId={eventId}
