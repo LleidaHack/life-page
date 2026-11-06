@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import AlertCenter, { type LiveAlert } from "./AlertCenter";
 import LiveHomePanels from "./LiveHomePanels";
+import ScheduleTimeline from "./ScheduleTimeline";
 import FullscreenDisplay from "./FullscreenDisplay";
 import "./event-live.css";
 import "./live-home.css";
@@ -370,49 +371,17 @@ export default function EventLive({ view = "home" }: { view?: string }) {
                 <h2>Ara i a continuació</h2>
                 <Link href="/schedule">Tota l’agenda ↗</Link>
               </div>
-              <div className="farm-grid">
-                {activities.slice(0, fullscreen ? 4 : 3).map((a) => (
-                  <article key={a.id}>
-                    <span className="farm-eyebrow">
-                      {new Date(a.start).getTime() <= now + offset
-                        ? "ARA"
-                        : new Date(a.start).toLocaleTimeString("ca-ES", {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
-                    </span>
-                    <h3>{a.title}</h3>
-                    <p>{a.location}</p>
-                  </article>
-                ))}
-                {!activities.length && (
-                  <p>No hi ha més activitats programades.</p>
-                )}
-              </div>
+              <ScheduleTimeline
+                activities={activities.slice(0, fullscreen ? 4 : 3)}
+                now={now + offset}
+              />
             </section>
           </>
         )}
         {view === "schedule" && (
           <section>
             <h1>Agenda de la HackEPS</h1>
-            <div className="farm-grid">
-              {data.activities.map((a) => (
-                <article key={a.id}>
-                  <p>
-                    {new Date(a.start).toLocaleString("ca-ES")} –{" "}
-                    {new Date(a.end).toLocaleTimeString("ca-ES", {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </p>
-                  <h2>{a.title}</h2>
-                  <p>{a.location}</p>
-                  {a.points > 0 && (
-                    <span>+{a.points} LleidaCoins per participar</span>
-                  )}
-                </article>
-              ))}
-            </div>
+            <ScheduleTimeline activities={data.activities} now={now + offset} />
           </section>
         )}
         {view === "challenges" && (
