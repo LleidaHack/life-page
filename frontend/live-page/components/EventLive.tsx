@@ -138,6 +138,7 @@ export default function EventLive({ view = "home" }: { view?: string }) {
     }
   }
   async function subscribe() {
+    let stage = "permission";
     try {
       if (!("Notification" in window) || !("serviceWorker" in navigator) || !("PushManager" in window))
         throw Error(
@@ -146,24 +147,28 @@ export default function EventLive({ view = "home" }: { view?: string }) {
       const permission = await Notification.requestPermission();
       if (permission !== "granted")
         throw Error("Permet les notificacions a la configuració del navegador per rebre avisos.");
-      const { public_key } = await (
-        await fetch(`${api}/v1/operations/${eventId}/push-key`)
-      ).json();
+      stage = "configuration";
+      const keyResponse = await fetch(`${api}/v1/operations/${eventId}/push-key`);
+      if (!keyResponse.ok) throw Error("No s’ha pogut consultar la configuració de notificacions. Torna-ho a provar.");
+      const { public_key } = await keyResponse.json();
       if (!public_key)
         throw Error("Les notificacions push encara no estan configurades.");
-      const registration = await navigator.serviceWorker.register("/sw.js");
-      await navigator.serviceWorker.ready;
+      stage = "service-worker";
+      await navigator.serviceWorker.register("/sw.js");
+      const registration = await navigator.serviceWorker.ready;
       const normalized = public_key.replace(/-/g, "+").replace(/_/g, "/");
       const key = Uint8Array.from(
         atob(normalized.padEnd(Math.ceil(normalized.length / 4) * 4, "=")),
         (c) => c.charCodeAt(0),
       );
+      stage = "push-service";
       const subscription =
         (await registration.pushManager.getSubscription()) ||
         (await registration.pushManager.subscribe({
           userVisibleOnly: true,
           applicationServerKey: key,
         }));
+      stage = "save-subscription";
       const response = await fetch(
         `${api}/v1/operations/${eventId}/subscribe`,
         {
@@ -176,9 +181,17 @@ export default function EventLive({ view = "home" }: { view?: string }) {
       setPush("Avisos activats!");
       return true;
     } catch (e) {
-      setPush(
-        e instanceof Error ? e.message : "No s’han pogut activar els avisos",
-      );
+      const message = e instanceof Error ? e.message : "No s’han pogut activar els avisos";
+      const name = e instanceof Error ? e.name : "UnknownError";
+      // Do not log subscription endpoints, keys or provider response bodies.
+      console.warn("Push registration failed", { stage, name });
+      if (stage === "push-service" && /push service|registration failed/i.test(message)) {
+        setPush("El navegador no ha pogut connectar amb el servei push. Si fas servir el navegador integrat, obre el Live en Chrome o Safari. A Brave, revisa l’opció «Use Google services for push messaging» a la configuració. Els avisos dins del Live continuen disponibles mentre el tens obert.");
+      } else if (name === "NotAllowedError") {
+        setPush("Permet les notificacions a la configuració del navegador per rebre avisos.");
+      } else {
+        setPush(message);
+      }
       return false;
     }
   }
