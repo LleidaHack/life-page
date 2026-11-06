@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import AlertCenter, { type LiveAlert } from "./AlertCenter";
 import LiveHomePanels from "./LiveHomePanels";
+import YouTubeBroadcast from "./YouTubeBroadcast";
 import ScheduleTimeline from "./ScheduleTimeline";
 import FullscreenDisplay from "./FullscreenDisplay";
 import "./event-live.css";
@@ -64,14 +65,6 @@ export default function EventLive({ view = "home" }: { view?: string }) {
     [search, setSearch] = useState(""),
     [push, setPush] = useState("");
   const [room, setRoom] = useState("");
-  const [footerHeight, setFooterHeight] = useState(0);
-  const measureFooter = useCallback((node: HTMLElement | null) => {
-    if (!node) return;
-    const observer = new ResizeObserver(() => setFooterHeight(node.getBoundingClientRect().height));
-    observer.observe(node);
-    setFooterHeight(node.getBoundingClientRect().height);
-    return () => observer.disconnect();
-  }, []);
   const closeGame = useCallback(() => setGame(false), []);
   useEffect(() => {
     setRoom(new URLSearchParams(window.location.search).get("room") || "");
@@ -225,7 +218,7 @@ export default function EventLive({ view = "home" }: { view?: string }) {
       />
     );
   return (
-    <main className={`farm-live ${view === "home" ? "live-home" : ""}`} style={{ paddingBottom: footerHeight }}>
+    <main className={`farm-live ${view === "home" ? "live-home" : ""}`}>
       <header>
         <Link href="/" className="farm-brand">
           <img src="/hackeps/isotip.svg" alt="HackEPS" width={75} height={48} />
@@ -350,6 +343,7 @@ export default function EventLive({ view = "home" }: { view?: string }) {
                 </button>
               </div>
             </section>
+            {view === "home" && <YouTubeBroadcast api={api} eventId={eventId} />}
             {view === "home" && (
               <LiveHomePanels
                 data={data}
@@ -554,7 +548,7 @@ export default function EventLive({ view = "home" }: { view?: string }) {
         )}
       </div>
       {!fullscreen && (
-        <footer ref={measureFooter}>
+        <footer>
           {data.slack_url && (
             <a
               className="farm-button"
