@@ -272,6 +272,7 @@ export default function EventLive({ view = "home" }: { view?: string }) {
           alerts={data.alerts}
           eventId={eventId}
           onEnablePush={subscribe}
+          showControls={view === "home"}
         />
         {push && (
           <p className="live-push-status" role="status">

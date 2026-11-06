@@ -64,7 +64,8 @@
   border-radius: 4px;
 }
 .farm-page-content {
-  max-width: 1280px;
+  width: 100%;
+  max-width: none;
   margin: auto;
   padding: 24px clamp(20px, 4vw, 64px) 48px;
   background:

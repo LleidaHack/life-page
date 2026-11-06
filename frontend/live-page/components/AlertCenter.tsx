@@ -43,10 +43,12 @@ export default function AlertCenter({
   alerts,
   eventId,
   onEnablePush,
+  showControls = true,
 }: {
   alerts: LiveAlert[];
   eventId: string;
   onEnablePush: () => void;
+  showControls?: boolean;
 }) {
   const [visible, setVisible] = useState<LiveAlert[]>([]);
   const [enabled, setEnabled] = useState(
@@ -161,7 +163,7 @@ export default function AlertCenter({
 
   return (
     <>
-      <div
+      {showControls && <div
         className="live-notification-controls"
         aria-label="Preferències dels avisos"
       >
@@ -174,7 +176,7 @@ export default function AlertCenter({
           Notificacions push
         </button>
         {audioError && <span role="status">{audioError}</span>}
-      </div>
+      </div>}
       <div
         className="live-notification-stack"
         aria-live="polite"
