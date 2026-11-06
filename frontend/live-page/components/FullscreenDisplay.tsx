@@ -67,6 +67,20 @@ export default function FullscreenDisplay({
           <img src="/hackeps/isotip.svg" width={56} height={36} alt="HackEPS" />
         </Link>
         {judging && <span>Presentacions</span>}
+      {leaderboard.length > 0 && (
+        <section className="screen-podium" aria-labelledby="screen-podium-title">
+          <h2 id="screen-podium-title">LleidaCoins · Top 3</h2>
+          <ol>
+            {leaderboard.slice(0, 3).map((entry, index) => (
+              <li key={`${entry.nickname}-${index}`} className={index === 0 ? "is-leading" : ""}>
+                <span className="screen-podium-rank">{entry.rank === 1 ? "🥇" : entry.rank === 2 ? "🥈" : entry.rank === 3 ? "🥉" : entry.rank}<span className="sr-only">Posició {entry.rank}</span></span>
+                <strong>{entry.nickname}</strong>
+                <span className="screen-podium-balance">{entry.balance.toLocaleString("ca-ES")} <small>LC</small></span>
+              </li>
+            ))}
+          </ol>
+        </section>
+      )}
         {error && (
           <p className="screen-connection" role="status">
             Sense connexió · Dades pendents d’actualitzar
@@ -92,20 +106,6 @@ export default function FullscreenDisplay({
           </p>
         )}
       </section>
-      {leaderboard.length > 0 && (
-        <section className="screen-podium" aria-labelledby="screen-podium-title">
-          <h2 id="screen-podium-title">LleidaCoins · Top 3</h2>
-          <ol>
-            {leaderboard.slice(0, 3).map((entry, index) => (
-              <li key={`${entry.nickname}-${index}`} className={index === 0 ? "is-leading" : ""}>
-                <span className="screen-podium-rank">{entry.rank === 1 ? "🥇" : entry.rank === 2 ? "🥈" : entry.rank === 3 ? "🥉" : entry.rank}<span className="sr-only">Posició {entry.rank}</span></span>
-                <strong>{entry.nickname}</strong>
-                <span className="screen-podium-balance">{entry.balance.toLocaleString("ca-ES")} <small>LC</small></span>
-              </li>
-            ))}
-          </ol>
-        </section>
-      )}
       <section
         className={`screen-upcoming ${judging ? "is-judging" : ""}`}
         aria-label={judging ? "Torns de presentació" : "Pròximes activitats"}
