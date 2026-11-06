@@ -412,7 +412,7 @@ export default function EventLive({ view = "home" }: { view?: string }) {
         )}
         {judging && (view === "judging" || view === "home" || fullscreen) && (
           <section>
-            <h1>Sala d’espera · Judging</h1>
+            <h1>Judging</h1>
             {!data.rooms.length && <p role="status">Els torns es publicaran aquí quan estiguin preparats.</p>}
             {!fullscreen && (
               <input
@@ -422,7 +422,7 @@ export default function EventLive({ view = "home" }: { view?: string }) {
                 onChange={(e) => setSearch(e.target.value)}
               />
             )}
-            <div className="farm-grid">
+            <div className="farm-grid farm-judging-grid">
               {data.rooms
                 .filter((r) => !room || r.id === room)
                 .map((r) => (

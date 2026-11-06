@@ -66,7 +66,7 @@ export default function FullscreenDisplay({
         <Link href="/" aria-label="Tornar a HackEPS Live">
           <img src="/hackeps/isotip.svg" width={56} height={36} alt="HackEPS" />
         </Link>
-        {judging && <span>Presentacions</span>}
+
       {leaderboard.length > 0 && (
         <section className="screen-podium" aria-label="Classificació de LleidaCoins">
           <ol>
@@ -111,7 +111,7 @@ export default function FullscreenDisplay({
       >
         {judging ? (
           <>
-          <h1 className="screen-waiting-title">Sala d’espera · Judging</h1>
+          <h1 className="screen-waiting-title">Judging</h1>
           {!rooms.length && <p className="screen-empty" role="status">Els torns es publicaran aquí quan estiguin preparats.</p>}
           <div className="screen-room-grid">
             {rooms
@@ -121,19 +121,15 @@ export default function FullscreenDisplay({
                   .filter(
                     (p) =>
                       p.room === r.id && !["done", "absent"].includes(p.state),
-                  )
-                  .slice(0, 5);
+                  );
+                const visibleTurns = turns.slice(0, 5);
                 return (
-                  <article key={r.id}>
-                    <h2>
-                      {r.title}
-                      {r.paused && " · En pausa"}
-                    </h2>
+                  <article key={r.id} className={`screen-room ${r.paused ? "is-paused" : ""}`}>
+                    <div className="screen-room-heading"><h2>{r.title}</h2><span>{r.paused ? "En pausa" : `${turns.length} en cua`}</span></div>
                     {turns.length ? (
-                      turns.map((p) => (
+                      visibleTurns.map((p) => (
                         <div className={`screen-turn is-${p.state}`} key={p.id}>
-                          <strong>{p.team}</strong>
-                          <span>
+                          <span className="screen-turn-label">
                             {(
                               {
                                 presenting: "Presentant",
@@ -148,11 +144,13 @@ export default function FullscreenDisplay({
                                   )
                                 : "En espera")}
                           </span>
+                          <strong>{p.team}</strong>
                         </div>
                       ))
                     ) : (
                       <p>Sense torns pendents</p>
                     )}
+                    {turns.length > 5 && <p className="screen-room-more">+{turns.length - 5} equips</p>}
                   </article>
                 );
               })}
