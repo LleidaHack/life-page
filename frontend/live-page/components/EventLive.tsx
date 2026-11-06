@@ -62,7 +62,6 @@ export default function EventLive({ view = "home" }: { view?: string }) {
     [now, setNow] = useState(Date.now()),
     [offset, setOffset] = useState(0);
   const [game, setGame] = useState(false),
-    [clicks, setClicks] = useState(0),
     [search, setSearch] = useState(""),
     [push, setPush] = useState("");
   const [room, setRoom] = useState("");
@@ -131,6 +130,13 @@ export default function EventLive({ view = "home" }: { view?: string }) {
     const timer = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(timer);
   }, []);
+  function enterFullscreen() {
+    if (!document.fullscreenElement && document.documentElement.requestFullscreen) {
+      void document.documentElement.requestFullscreen().catch(() => {
+        setPush("El navegador no ha pogut activar la pantalla completa. Pots tornar-ho a provar des de la configuració.");
+      });
+    }
+  }
   async function subscribe() {
     try {
       if (!("Notification" in window) || !("serviceWorker" in navigator) || !("PushManager" in window))
@@ -238,7 +244,7 @@ export default function EventLive({ view = "home" }: { view?: string }) {
             <Link href="/help">Ajuda</Link>
             <Link href="/leaderboard">LleidaCoins</Link>
             {judging && <Link href="/judging">Presentacions</Link>}
-            <Link href="/fullscreen">Pantalla completa</Link>
+            <Link href="/fullscreen" onClick={enterFullscreen}>Pantalla completa</Link>
           </nav>
         )}
       </header>
@@ -287,6 +293,7 @@ export default function EventLive({ view = "home" }: { view?: string }) {
                 <Link
                   href="/fullscreen"
                   className="farm-countdown"
+                  onClick={enterFullscreen}
                   aria-label="Temps restant. Obrir pantalla completa"
                 >
                   {countdown}
@@ -304,50 +311,19 @@ export default function EventLive({ view = "home" }: { view?: string }) {
                 )}
               </div>
               <div className="farm-art">
-                <img
-                  className="farm-edition-logo"
-                  src="/hackeps/logo-taronja.webp"
-                  alt="HackEPS · 10a edició"
-                  width={340}
-                  height={420}
-                />
                 <button
-                  className="farm-tractor"
-                  aria-label="Tractor"
-                  onClick={() => {
-                    setClicks(clicks + 1);
-                    if (clicks >= 4 && data.game_enabled) setGame(true);
-                  }}
+                  className="farm-logo-game"
+                  aria-label="Obrir Tractor Run"
+                  disabled={!data.game_enabled}
+                  onClick={() => setGame(true)}
                 >
-                  <svg viewBox="0 0 360 250" aria-hidden="true">
-                    <path
-                      d="M0 225Q90 180 180 220T360 200V250H0Z"
-                      fill="#78c6bd"
-                    />
-                    <path
-                      d="M65 145V65H170V145H260L290 185H55Z"
-                      fill="#ff7430"
-                    />
-                    <path d="M83 80H148V135H83Z" fill="#94cbf5" />
-                    <path
-                      d="M190 115V70H204V145"
-                      fill="none"
-                      stroke="#2e2e2e"
-                      strokeWidth="12"
-                    />
-                    <rect
-                      x="210"
-                      y="150"
-                      width="60"
-                      height="30"
-                      rx="5"
-                      fill="#fff"
-                    />
-                    <circle cx="100" cy="190" r="48" fill="#2e2e2e" />
-                    <circle cx="100" cy="190" r="25" fill="#fff" />
-                    <circle cx="260" cy="200" r="31" fill="#2e2e2e" />
-                    <circle cx="260" cy="200" r="15" fill="#fff" />
-                  </svg>
+                  <img
+                    className="farm-edition-logo"
+                    src="/hackeps/logo-taronja.webp"
+                    alt="HackEPS · 10a edició"
+                    width={340}
+                    height={420}
+                  />
                 </button>
               </div>
             </section>

@@ -20,7 +20,7 @@
 }
 .farm-live.live-home .live-home-intro {
   order: -2;
-  grid-template-columns: 1fr 210px;
+  grid-template-columns: 1fr 300px;
   margin: 0 calc(-1 * var(--home-gutter));
   padding: 36px var(--home-gutter) 40px;
   background: var(--orange);
@@ -58,11 +58,11 @@
   font-size: 11px;
 }
 .farm-live.live-home .live-home-intro .farm-art {
-  min-height: 230px;
+  min-height: 340px;
 }
 .farm-live.live-home .live-home-intro .farm-edition-logo {
-  width: 200px;
-  height: 230px;
+  width: 300px;
+  height: 340px;
 }
 .farm-live.live-home .live-home-intro .farm-tractor {
   width: 64px;
@@ -177,7 +177,7 @@
     font-size: 11px;
   }
   .farm-live.live-home .live-home-intro {
-    grid-template-columns: 1fr 90px;
+    grid-template-columns: minmax(0, 1fr) 120px;
     padding: 24px var(--home-gutter) 32px;
     gap: 12px;
   }
@@ -192,8 +192,8 @@
     min-height: 130px;
   }
   .farm-live.live-home .live-home-intro .farm-edition-logo {
-    width: 90px;
-    height: 120px;
+    width: 120px;
+    height: 155px;
   }
   .farm-live.live-home .live-home-intro .farm-tractor {
     width: 44px;
@@ -221,3 +221,14 @@
 @media (max-width: 700px) {
   .live-home .without-stream .live-information-grid { grid-template-columns: 1fr; }
 }
+
+.farm-live .farm-logo-game {
+  display: block;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  cursor: pointer;
+}
+.farm-live .farm-logo-game:disabled { cursor: default; }
+.farm-live .farm-logo-game:hover { background: transparent; transform: none; }
