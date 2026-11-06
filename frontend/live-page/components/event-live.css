@@ -15,8 +15,7 @@
   flex-direction: column;
   min-height: 100dvh;
 }
-.farm-live > header,
-.farm-live > footer {
+.farm-live > header {
   flex-shrink: 0;
 }
 .farm-live * {
@@ -206,18 +205,6 @@
 .farm-live :is(a, button, input, summary):focus-visible {
   outline: 3px solid var(--ink);
   outline-offset: 4px;
-}
-.farm-live footer {
-  background: var(--orange);
-  padding: 28px 24px;
-  text-align: center;
-  border-top: 2px solid var(--ink);
-}
-.farm-live footer button {
-  margin: 8px;
-}
-.farm-live footer p {
-  font-size: 12px;
 }
 .farm-alert {
   background: white;

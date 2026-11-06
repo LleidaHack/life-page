@@ -384,7 +384,7 @@ export default function EventLive({ view = "home" }: { view?: string }) {
         )}
         {view === "map" && (
           <section>
-            <h1>Mapa de l’esdeveniment</h1>
+            <h1>Mapa</h1>
             {data.map_url ? (
               <a href={data.map_url} target="_blank" rel="noreferrer">
                 <img
@@ -520,22 +520,6 @@ export default function EventLive({ view = "home" }: { view?: string }) {
           <p>Els torns es publicaran quan comencin les presentacions.</p>
         )}
       </div>
-      {!fullscreen && (
-        <footer>
-          {data.slack_url && (
-            <a
-              className="farm-button"
-              href={data.slack_url}
-              target="_blank"
-              rel="noreferrer"
-            >
-              Entrar a Discord ↗
-            </a>
-          )}
-
-          <p>HackEPS · LleidaHack · Escola Politècnica Superior</p>
-        </footer>
-      )}
       {fullscreen && (
         <button
           className="farm-fullscreen"
