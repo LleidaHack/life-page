@@ -10,6 +10,15 @@
   font-family: var(--font-mono), "Space Mono", monospace;
   overflow-x: clip;
 }
+.farm-live:not(.minimal-screen) {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+.farm-live > header,
+.farm-live > footer {
+  flex-shrink: 0;
+}
 .farm-live * {
   box-sizing: border-box;
 }
@@ -66,7 +75,8 @@
 .farm-page-content {
   width: 100%;
   max-width: none;
-  margin: auto;
+  flex: 1;
+  margin: 0 auto;
   padding: 24px clamp(20px, 4vw, 64px) 48px;
   background:
     url("/hackeps/cloud-1.svg") right 190px / 160px auto no-repeat,
