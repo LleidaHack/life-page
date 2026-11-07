@@ -1,5 +1,6 @@
 "use client";
 
+import YouTubeBroadcast, { videoId } from "./YouTubeBroadcast";
 import AmbientScenes from "./AmbientScenes";
 import { useState } from "react";
 import Link from "next/link";
@@ -18,6 +19,8 @@ type Presentation = {
 type Room = { id: string; title: string; paused: boolean };
 
 export default function FullscreenDisplay({
+  streamUrl,
+  streamEnabled,
   countdown,
   deadline,
   finished,
@@ -34,6 +37,8 @@ export default function FullscreenDisplay({
   pushStatus,
   onEnablePush,
 }: {
+  streamUrl?: string | null;
+  streamEnabled: boolean;
   countdown: string;
   deadline: string | null;
   finished: boolean;
@@ -50,6 +55,7 @@ export default function FullscreenDisplay({
   pushStatus: string;
   onEnablePush: () => void;
 }) {
+  const showBroadcast = !!(streamEnabled && streamUrl && videoId(streamUrl));
   const [toolsOpen, setToolsOpen] = useState(false);
   const [screenError, setScreenError] = useState("");
   async function toggleFullscreen() {
@@ -88,6 +94,11 @@ export default function FullscreenDisplay({
           </p>
         )}
       </div>
+      {showBroadcast ? (
+        <div className="screen-broadcast">
+          <YouTubeBroadcast url={streamUrl} enabled={streamEnabled} />
+        </div>
+      ) : <>
       {!judging && <section className="screen-stage" aria-label="Compte enrere">
         {finished && <h1>Temps de lliurament finalitzat</h1>}
         <div className={`screen-timer ${deadline ? "" : "is-pending"}`}>
@@ -179,6 +190,7 @@ export default function FullscreenDisplay({
           <p className="screen-empty">No hi ha més activitats programades.</p>
         )}
       </section>
+      </>}
       <div className={`screen-tools ${toolsOpen ? "is-open" : ""}`}>
         <button
           className="screen-settings-toggle"

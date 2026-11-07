@@ -2,7 +2,7 @@
 
 import "./youtube-broadcast.css";
 
-function videoId(value: string): string | null {
+export function videoId(value: string): string | null {
   try {
     const url = new URL(value);
     if (url.protocol !== "https:" && url.protocol !== "http:") return null;

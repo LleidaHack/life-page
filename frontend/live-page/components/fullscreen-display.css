@@ -406,3 +406,18 @@
 }
 
 .farm-live.minimal-screen.is-judging .screen-waiting-title { margin-bottom: 18px; }
+
+.farm-live .screen-broadcast {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 0;
+}
+.screen-broadcast .youtube-broadcast {
+  width: min(100%, calc((100svh - 220px) * 16 / 9));
+  margin: 0;
+  background: #000;
+}
+.screen-broadcast .youtube-broadcast-heading { display: none; }
+.screen-broadcast .youtube-broadcast iframe { min-height: 0; }

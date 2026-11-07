@@ -228,6 +228,8 @@ export default function EventLive({ view = "home" }: { view?: string }) {
   if (fullscreen)
     return (
       <FullscreenDisplay
+        streamUrl={data.stream_url}
+        streamEnabled={data.stream_enabled ?? false}
         countdown={countdown}
         deadline={data.deadline}
         finished={left === 0}
