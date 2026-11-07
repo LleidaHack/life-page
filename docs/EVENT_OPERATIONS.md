@@ -29,3 +29,9 @@ For a visible Live page, Web Push forwards the same alert ID to the page instead
 The fullscreen display uses a minimal dark layout with a large countdown and three upcoming activities. Screen settings contain sound, push and native fullscreen controls. A tractor and the edition Marraco cross the reserved bottom strip alternately every 90 seconds (first appearance after 8 seconds). Decorations are hidden when reduced motion is requested.
 
 The public homepage groups edition artwork and the submission timer in one orange masthead. Stream and next-activity information sit beside Wi-Fi and contact details, followed by an unboxed agenda and the LleidaCoins ranking. Its scoped styles preserve the independent fullscreen display.
+
+## Automatic live broadcast
+
+The home page checks the backend broadcast endpoint every 30 seconds, including during judging. A confirmed public, embeddable YouTube live broadcast appears automatically and starts muted with inline playback; viewers can enable sound in the player. Browser autoplay policies may still require interaction.
+
+Configure `YOUTUBE_API_KEY` on the backend and optionally `YOUTUBE_CHANNEL_HANDLE` (default: `LleidaHack`). Redis must be available. Discovery of a new broadcast runs every 900 seconds by default to respect search quota; `YOUTUBE_DISCOVERY_SECONDS` can adjust this interval subject to provider quota. Existing broadcasts are checked every 30 seconds. Missing credentials or an unavailable provider hide the player. The local demo does not include a YouTube API key.

@@ -298,6 +298,7 @@ export default function EventLive({ view = "home" }: { view?: string }) {
             {push}
           </p>
         )}
+        {view === "home" && <YouTubeBroadcast api={api} eventId={eventId} />}
         {!judging && (view === "home" || fullscreen) && (
           <>
             <section
@@ -342,7 +343,6 @@ export default function EventLive({ view = "home" }: { view?: string }) {
                 </button>
               </div>
             </section>
-            {view === "home" && <YouTubeBroadcast api={api} eventId={eventId} />}
             {view === "home" && (
               <LiveHomePanels data={data} />
             )}
