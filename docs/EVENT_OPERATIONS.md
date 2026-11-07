@@ -37,3 +37,22 @@ In Gestió → Comunicació → Live, paste the YouTube video URL, enable **Most
 The home page displays the selected video during hacking and judging, with muted autoplay and inline playback. Viewers can enable sound in the player; browser autoplay policies may require interaction. Stream status is controlled by the organizer, not detected automatically. The backend persists `stream_enabled` (default false) alongside `stream_url` in event configuration; deploy the backend update before the management and Live clients. No database migration or YouTube API key is required. Existing channel links remain available in the channel card.
 
 Fullscreen projection also follows the broadcast switch, including room-specific screens. While enabled with a valid video link, the video replaces the countdown and judging queues. Disabling it restores the normal screen automatically through the existing configuration polling. Alerts and screen controls remain available.
+
+## Production deployment
+
+The Live frontend talks only to **LleidaHackBackend** (`/v1/operations/{event}/public`, `/push-key`, `/subscribe`, `/ws` and `/v1/event/get_hackeps`). The former Live backend (`backend/`) is no longer used and was removed from `docker-compose.yml`.
+
+1. Build-time settings (`NEXT_PUBLIC_*` are baked into the bundle; set them as Compose variables before `docker compose build`):
+   - `LIVE_API_BASE_URL` — LleidaHackBackend base URL (default `https://backend.main.lleidahack.dev`). The Docker build fails if the API URL is empty.
+   - `LIVE_EVENT_ID` — optional. Empty resolves the current HackEPS edition through `/v1/event/get_hackeps`.
+   - `LIVE_ADMIN_URL` — optional Gestió link on `/admin`.
+   - `LIVE_DEVPOST_URL` — optional Devpost page of the edition (the button is hidden when empty).
+2. Backend: add the Live origin(s) (e.g. `https://live.hackeps.com`) to `CORS_ORIGINS`; otherwise snapshot, push-key and subscription requests fail in the browser.
+3. Reverse proxy: enable WebSocket support for the API host (Nginx Proxy Manager → "Websockets Support"). Without it, Live falls back to HTTP polling.
+4. Secrets: `backend/.env` was committed in the past and is no longer tracked. Rotate the old `ADMIN_USERNAME`/`ADMIN_PASSWORD`. On a server that deploys with `git pull`, copy `backend/.env` aside first, because untracking it deletes the file on pull.
+
+### Load behaviour
+
+- HTTP snapshot polling is a fallback: every ~20 s while the WebSocket is open, ~4 s otherwise, with jitter, exponential backoff on errors and no polling in hidden tabs.
+- WebSocket reconnects with exponential backoff (3 s → 60 s, jitter), stops on close code 1008 (unknown event) and reconnects when no heartbeat arrives for 45 s.
+- The service worker shows a system notification unless a visible Live page for the same event acknowledges the alert.

@@ -1,6 +1,6 @@
 "use client";
 import AmbientScenes from "./AmbientScenes";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import AlertCenter, { type LiveAlert } from "./AlertCenter";
@@ -11,6 +11,7 @@ import ScheduleTimeline from "./ScheduleTimeline";
 import FullscreenDisplay from "./FullscreenDisplay";
 import "./event-live.css";
 import "./live-home.css";
+import { configuredEventId, liveApi, resolveEventId } from "@/lib/liveEvent";
 
 const TractorRun = dynamic(() => import("./TractorRun"), { ssr: false });
 type Activity = {
@@ -54,10 +55,13 @@ type LiveEvent = {
     scheduled_at: string | null;
   }[];
 };
-const api = (
-  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000"
-).replace(/\/$/, "");
-const eventId = process.env.NEXT_PUBLIC_EVENT_ID || "1";
+const api = liveApi;
+const jitter = (ms: number) => ms * (0.8 + Math.random() * 0.4);
+// Polling is only a fallback while the WebSocket delivers alerts.
+const POLL_WITH_SOCKET_MS = 20_000;
+const POLL_WITHOUT_SOCKET_MS = 4_000;
+const MAX_BACKOFF_MS = 60_000;
+const HEARTBEAT_TIMEOUT_MS = 45_000;
 export default function EventLive({ view = "home" }: { view?: string }) {
   const [data, setData] = useState<LiveEvent | null>(null),
     [error, setError] = useState(""),
@@ -67,44 +71,120 @@ export default function EventLive({ view = "home" }: { view?: string }) {
     [search, setSearch] = useState(""),
     [push, setPush] = useState("");
   const [room, setRoom] = useState("");
+  const [eventId, setEventId] = useState(configuredEventId);
+  const socketOpen = useRef(false);
   const closeGame = useCallback(() => setGame(false), []);
   useEffect(() => {
     setRoom(new URLSearchParams(window.location.search).get("room") || "");
+  }, []);
+  useEffect(() => {
+    if (eventId) return;
     let active = true;
+    let retry: ReturnType<typeof setTimeout> | undefined;
+    let failures = 0;
+    const attempt = () =>
+      resolveEventId()
+        .then((id) => {
+          if (active) setEventId(id);
+        })
+        .catch(() => {
+          if (!active) return;
+          setError("No s’ha pogut trobar l’edició actual de la HackEPS.");
+          failures += 1;
+          retry = setTimeout(
+            attempt,
+            jitter(Math.min(MAX_BACKOFF_MS, 3000 * 2 ** failures)),
+          );
+        });
+    void attempt();
+    return () => {
+      active = false;
+      clearTimeout(retry);
+    };
+  }, [eventId]);
+  useEffect(() => {
+    if (!eventId) return;
+    let active = true;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    let failures = 0;
+    const schedule = () => {
+      clearTimeout(timer);
+      const base = socketOpen.current
+        ? POLL_WITH_SOCKET_MS
+        : POLL_WITHOUT_SOCKET_MS;
+      const delay = failures
+        ? Math.min(MAX_BACKOFF_MS, POLL_WITHOUT_SOCKET_MS * 2 ** failures)
+        : base;
+      timer = setTimeout(load, jitter(delay));
+    };
     const load = async () => {
+      // Background tabs and screens that are off do not poll.
+      if (document.hidden) return schedule();
       try {
         const response = await fetch(`${api}/v1/operations/${eventId}/public`, {
           cache: "no-store",
         });
         if (!response.ok) throw Error("No s’ha pogut actualitzar el Live");
-        const next = await response.json();
+        const raw = await response.json();
+        // Configurations created before some fields existed omit them.
+        const next: LiveEvent = {
+          ...raw,
+          activities: raw.activities ?? [],
+          challenges: raw.challenges ?? [],
+          faqs: raw.faqs ?? [],
+          alerts: raw.alerts ?? [],
+          rooms: raw.rooms ?? [],
+          presentations: raw.presentations ?? [],
+          leaderboard: raw.leaderboard ?? [],
+        };
         if (active) {
+          failures = 0;
           setData(next);
           setOffset(new Date(next.server_time).getTime() - Date.now());
           setError("");
         }
       } catch {
+        failures += 1;
         if (active)
           setError("Sense connexió. Mostrant la darrera informació rebuda.");
       }
+      if (active) schedule();
+    };
+    const onVisible = () => {
+      if (!document.hidden) void load();
     };
     void load();
-    const timer = setInterval(load, 3000);
+    document.addEventListener("visibilitychange", onVisible);
     return () => {
       active = false;
-      clearInterval(timer);
+      clearTimeout(timer);
+      document.removeEventListener("visibilitychange", onVisible);
     };
-  }, []);
+  }, [eventId]);
   useEffect(() => {
+    if (!eventId) return;
     let active = true;
     let socket: WebSocket | null = null;
     let retry: ReturnType<typeof setTimeout> | undefined;
+    let watchdog: ReturnType<typeof setTimeout> | undefined;
+    let failures = 0;
+    // The server sends a heartbeat every 15 s; silence means a dead link.
+    const resetWatchdog = () => {
+      clearTimeout(watchdog);
+      watchdog = setTimeout(() => socket?.close(), HEARTBEAT_TIMEOUT_MS);
+    };
     const connect = () => {
       socket = new WebSocket(
         `${api.replace(/^http/, "ws")}/v1/operations/${eventId}/ws`,
       );
+      socket.onopen = () => {
+        failures = 0;
+        socketOpen.current = true;
+        resetWatchdog();
+      };
       socket.onmessage = (event) => {
         if (!active) return;
+        resetWatchdog();
         try {
           const message = JSON.parse(event.data);
           if (message.type === "alerts" && Array.isArray(message.alerts)) {
@@ -116,18 +196,28 @@ export default function EventLive({ view = "home" }: { view?: string }) {
           /* HTTP polling repairs malformed or interrupted updates. */
         }
       };
-      socket.onclose = () => {
-        if (active) retry = setTimeout(connect, 3000);
+      socket.onclose = (event) => {
+        socketOpen.current = false;
+        clearTimeout(watchdog);
+        // 1008: the event does not exist; polling keeps the page updated.
+        if (!active || event.code === 1008) return;
+        failures += 1;
+        retry = setTimeout(
+          connect,
+          jitter(Math.min(MAX_BACKOFF_MS, 3000 * 2 ** (failures - 1))),
+        );
       };
       socket.onerror = () => socket?.close();
     };
     connect();
     return () => {
       active = false;
+      socketOpen.current = false;
       clearTimeout(retry);
+      clearTimeout(watchdog);
       socket?.close();
     };
-  }, []);
+  }, [eventId]);
   useEffect(() => {
     const timer = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(timer);

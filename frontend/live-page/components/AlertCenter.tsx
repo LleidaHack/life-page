@@ -134,8 +134,12 @@ export default function AlertCenter({
       if (
         event.data?.type === "hackeps-alert" &&
         String(event.data.event_id) === eventId
-      )
+      ) {
         receive([event.data.alert]);
+        // Tell the service worker the alert was shown, so it skips the
+        // system notification only when a Live page really displayed it.
+        event.ports?.[0]?.postMessage("shown");
+      }
     };
     navigator.serviceWorker?.addEventListener("message", onMessage);
     return () => {

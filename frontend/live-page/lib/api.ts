@@ -109,18 +109,32 @@ function assertResponseOk(response: Response, context: string) {
   }
 }
 
+// Countdown derived from the event-operations deadline (the legacy /timer
+// endpoint belonged to the retired Live backend).
 export async function fetchTimer(signal?: AbortSignal): Promise<TimerResponse> {
-  const response = await fetch(buildApiUrl("/timer"), {
-    method: "GET",
-    headers: {
-      Accept: "application/json",
-    },
+  const { liveApi, resolveEventId } = await import("./liveEvent");
+  const eventId = await resolveEventId();
+  const response = await fetch(`${liveApi}/v1/operations/${eventId}/public`, {
+    headers: { Accept: "application/json" },
     cache: "no-store",
     signal,
   });
-
   assertResponseOk(response, "Timer");
-  return response.json();
+  const data = await response.json();
+  if (!data.deadline) throw new Error("Deadline not configured yet");
+  const now = Date.parse(data.server_time) || Date.now();
+  const end = Date.parse(data.deadline);
+  const remaining = Math.max(0, Math.floor((end - now) / 1000));
+  return {
+    timezone: "Europe/Madrid",
+    status: remaining > 0 ? "running" : "finished",
+    start_datetime: data.deadline,
+    end_datetime: data.deadline,
+    now: data.server_time,
+    seconds_until_start: 0,
+    seconds_elapsed: 0,
+    seconds_remaining: remaining,
+  };
 }
 
 export async function fetchChallenges(signal?: AbortSignal): Promise<Challenge[]> {

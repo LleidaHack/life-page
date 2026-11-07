@@ -5,34 +5,27 @@ networks:
     driver: bridge
 
 services:
-  backend:
-    build:
-      context: ./backend
-    env_file:
-      - ./backend/.env
-    networks:
-      - proxy-tier
-    # do not publish backend port to host — keep it internal only
-    expose:
-      - "8000"
-
   frontend:
     build:
       context: ./frontend/live-page
+      # NEXT_PUBLIC_* values are baked in at build time.
       args:
-        NEXT_PUBLIC_API_BASE_URL: https://backendlive.lleidahack.dev
-        API_INTERNAL_BASE_URL: https://backendlive.lleidahack.dev
+        # LleidaHackBackend (event operations, alerts, push, WebSocket).
+        NEXT_PUBLIC_API_BASE_URL: ${LIVE_API_BASE_URL:-https://backend.main.lleidahack.dev}
+        API_INTERNAL_BASE_URL: ${LIVE_API_BASE_URL:-https://backend.main.lleidahack.dev}
         NEXT_PUBLIC_TWITCH_PARENT: local
+        # Optional: pin an event id; empty resolves the current HackEPS edition.
+        NEXT_PUBLIC_EVENT_ID: ${LIVE_EVENT_ID:-}
+        NEXT_PUBLIC_ADMIN_URL: ${LIVE_ADMIN_URL:-}
+        NEXT_PUBLIC_DEVPOST_URL: ${LIVE_DEVPOST_URL:-}
     networks:
       - proxy-tier
-    depends_on:
-      - backend
     # do not publish frontend port to host — keep it internal only
     expose:
       - "3000"
     environment:
-      - NEXT_PUBLIC_API_BASE_URL=https://backendlive.lleidahack.dev
-      - API_INTERNAL_BASE_URL=https://backendlive.lleidahack.dev
+      - NEXT_PUBLIC_API_BASE_URL=${LIVE_API_BASE_URL:-https://backend.main.lleidahack.dev}
+      - API_INTERNAL_BASE_URL=${LIVE_API_BASE_URL:-https://backend.main.lleidahack.dev}
       - NEXT_PUBLIC_TWITCH_PARENT=local
 
   nginx-proxy-manager:

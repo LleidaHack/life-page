@@ -5,6 +5,9 @@ import Image from "next/image";
 
 import { useOfficialTimer } from "@/hooks/useOfficialTimer";
 import { HACKATHON_END } from "@/lib/constants";
+
+// Devpost page of the current edition (hidden when not configured).
+const DEVPOST_URL = process.env.NEXT_PUBLIC_DEVPOST_URL?.trim() || "";
 const instruccions = [
   {
     titol: "Inscriu-te al hackató",
@@ -73,15 +76,18 @@ export default function DevpostPage() {
             </div>
           ))}
         </div>
+        {DEVPOST_URL && (
         <div className="mt-6 flex justify-center">
           <Link
-            href={"https://hackeps-2025.devpost.com"}
+            href={DEVPOST_URL}
             target="_blank"
+            rel="noopener noreferrer"
             className="inline-flex items-center justify-center rounded-full border border-cta/40 px-6 py-3 text-base font-semibold text-cta transition hover:bg-cta/10 sm:text-lg"
           >
             Ves a Devpost
           </Link>
         </div>
+        )}
       </div>
       <div className="mx-auto my-20 w-full max-w-4xl space-y-6 pt-30">
         <h2 className="text-center text-3xl text-cta sm:text-4xl">
