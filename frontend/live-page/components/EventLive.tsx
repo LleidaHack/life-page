@@ -357,23 +357,6 @@ export default function EventLive({ view = "home" }: { view?: string }) {
         )}
       </header>
       <div className="farm-page-content">
-        {view === "management" && (
-          <section className="farm-management">
-            <h1>Gestió de HackEPS</h1>
-            <p>
-              Els avisos, els horaris i els permisos es gestionen al panell de
-              LleidaHack.
-            </p>
-            {process.env.NEXT_PUBLIC_ADMIN_URL && (
-              <a
-                className="farm-button"
-                href={process.env.NEXT_PUBLIC_ADMIN_URL}
-              >
-                Obrir Gestió
-              </a>
-            )}
-          </section>
-        )}
         {error && (
           <p className="farm-status" role="status">
             {error}
