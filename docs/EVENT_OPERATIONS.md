@@ -38,18 +38,24 @@ The home page displays the selected video during hacking and judging, with muted
 
 Fullscreen projection also follows the broadcast switch, including room-specific screens. While enabled with a valid video link, the video replaces the countdown and judging queues. Disabling it restores the normal screen automatically through the existing configuration polling. Alerts and screen controls remain available.
 
-## Production deployment
+## Production deployment (Vercel)
 
-The Live frontend talks only to **LleidaHackBackend** (`/v1/operations/{event}/public`, `/push-key`, `/subscribe`, `/ws` and `/v1/event/get_hackeps`). The former Live backend (`backend/`) is no longer used and was removed from `docker-compose.yml`.
+The Live frontend talks only to **LleidaHackBackend** (`/v1/operations/{event}/public`, `/push-key`, `/subscribe`, `/ws` and `/v1/event/get_hackeps`). Browsers connect to the backend directly (HTTPS and WSS), so Vercel only serves the Next.js app. The former Live backend (`backend/`) is no longer used.
 
-1. Build-time settings (`NEXT_PUBLIC_*` are baked into the bundle; set them as Compose variables before `docker compose build`):
-   - `LIVE_API_BASE_URL` — LleidaHackBackend base URL (default `https://backend.main.lleidahack.dev`). The Docker build fails if the API URL is empty.
-   - `LIVE_EVENT_ID` — optional. Empty resolves the current HackEPS edition through `/v1/event/get_hackeps`.
-   - `LIVE_ADMIN_URL` — optional Gestió link on `/admin`.
-   - `LIVE_DEVPOST_URL` — optional Devpost page of the edition (the button is hidden when empty).
-2. Backend: add the Live origin(s) (e.g. `https://live.hackeps.com`) to `CORS_ORIGINS`; otherwise snapshot, push-key and subscription requests fail in the browser.
-3. Reverse proxy: enable WebSocket support for the API host (Nginx Proxy Manager → "Websockets Support"). Without it, Live falls back to HTTP polling.
-4. Secrets: `backend/.env` was committed in the past and is no longer tracked. Rotate the old `ADMIN_USERNAME`/`ADMIN_PASSWORD`. On a server that deploys with `git pull`, copy `backend/.env` aside first, because untracking it deletes the file on pull.
+1. Vercel project settings:
+   - **Root Directory:** `frontend/live-page` (framework: Next.js; pnpm is detected from `pnpm-lock.yaml`).
+   - **Domain:** e.g. `live.hackeps.com`.
+2. Environment variables (Production, and Preview if previews should load data). `NEXT_PUBLIC_*` values are baked in at build time, so redeploy after changing them:
+   - `NEXT_PUBLIC_API_BASE_URL` — LleidaHackBackend base URL, e.g. `https://backend.main.lleidahack.dev`. **Required:** production and preview builds fail without it.
+   - `NEXT_PUBLIC_EVENT_ID` — optional. Empty resolves the current HackEPS edition through `/v1/event/get_hackeps`.
+   - `NEXT_PUBLIC_ADMIN_URL` — optional Gestió link on `/admin`.
+   - `NEXT_PUBLIC_DEVPOST_URL` — optional Devpost page of the edition (the button is hidden when empty).
+3. Backend `CORS_ORIGINS` must list the Live origin(s) exactly, e.g. `https://live.hackeps.com`. Vercel preview URLs change on every deployment and are not allowed unless added explicitly; test previews against a non-production backend or a fixed preview domain.
+4. Reverse proxy of the backend: enable WebSocket upgrades for `/v1/operations/{event}/ws` (Nginx Proxy Manager → "Websockets Support"). Without it, Live falls back to HTTP polling.
+5. `/sw.js` is served with `Cache-Control: no-cache`, so open screens pick up service-worker updates.
+6. Secrets: `backend/.env` was committed in the past and is no longer tracked. Rotate the old `ADMIN_USERNAME`/`ADMIN_PASSWORD`.
+
+The Dockerfile and `docker-compose.yml` remain as a self-hosted alternative (they build the standalone server with the same variables, prefixed `LIVE_` in Compose).
 
 ### Load behaviour
 
