@@ -1,0 +1,26 @@
+.pig-walk {
+  --pig-width: clamp(110px, 14vw, 180px);
+  position: absolute;
+  inset: auto 0 4px;
+  height: 140px;
+  overflow: hidden;
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+}
+.pig-walk img {
+  position: absolute;
+  bottom: 0;
+  width: var(--pig-width);
+  height: auto;
+  max-width: none;
+  animation: pig-crossing 30s linear infinite;
+}
+.minimal-screen .pig-walk { --pig-width: 96px; height: 72px; }
+@keyframes pig-crossing {
+  from { left: calc(0px - var(--pig-width)); }
+  to { left: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pig-walk { display: none; }
+}

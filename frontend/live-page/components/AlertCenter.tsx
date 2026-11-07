@@ -1,285 +1,223 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import {
-  AlertTriangle,
-  CheckCircle2,
-  Info,
-  Octagon,
-  X,
-  type LucideIcon,
-} from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Bell, Volume2, VolumeX, X } from "lucide-react";
+import ScreenAnnouncement from "./ScreenAnnouncement";
 
-import { getApiBaseUrl, type AlertMessage } from "@/lib/api";
-import { DEFAULT_TIMEZONE } from "@/lib/constants";
-import { cn } from "@/lib/utils";
-
-type ConnectionState = "connecting" | "open" | "closed";
-
-const MAX_VISIBLE_ALERTS = 3;
-const AUTO_DISMISS_MS = 2 * 60 * 1000; // 2 minutes
-
-const LEVEL_META: Record<
-  AlertMessage["level"],
-  { label: string; icon: LucideIcon; className: string; badgeClass: string }
-> = {
-  info: {
-    label: "Info",
-    icon: Info,
-    className: "border-sky-400/60 bg-sky-600/30 text-white shadow-sky-900/50",
-    badgeClass: "bg-sky-500/40 text-white",
-  },
-  success: {
-    label: "Èxit",
-    icon: CheckCircle2,
-    className: "border-emerald-400/60 bg-emerald-600/30 text-white shadow-emerald-900/50",
-    badgeClass: "bg-emerald-500/40 text-white",
-  },
-  warning: {
-    label: "Avís",
-    icon: AlertTriangle,
-    className: "border-amber-400/70 bg-amber-600/30 text-white shadow-amber-900/40",
-    badgeClass: "bg-amber-500/40 text-white",
-  },
-  danger: {
-    label: "Perill",
-    icon: Octagon,
-    className: "border-red-500/70 bg-red-700/40 text-white shadow-red-900/60",
-    badgeClass: "bg-red-500/60 text-white",
-  },
+export type LiveAlert = {
+  id: string;
+  title: string;
+  message: string;
+  level: string;
+  expires_at?: string;
 };
 
-const WEBSOCKET_PATH = "/notifications/ws/events";
+let audioContext: AudioContext | null = null;
+let soundEnabled = false;
+const DISPLAY_MS = 8000;
 
-function buildWsUrl(path: string): string | null {
-  try {
-    const url = new URL(path, getApiBaseUrl());
-    url.protocol = url.protocol === "https:" ? "wss:" : "ws:";
-    return url.toString();
-  } catch (error) {
-    console.error("Failed to build alerts websocket URL:", error);
-    return null;
+function playTone() {
+  if (!soundEnabled || audioContext?.state !== "running" || document.hidden)
+    return;
+  const context = audioContext;
+  for (const [index, frequency] of [660, 880].entries()) {
+    const oscillator = context.createOscillator();
+    const volume = context.createGain();
+    const start = context.currentTime + index * 0.16;
+    oscillator.type = "sine";
+    oscillator.frequency.value = frequency;
+    volume.gain.setValueAtTime(0, start);
+    volume.gain.linearRampToValueAtTime(0.09, start + 0.02);
+    volume.gain.exponentialRampToValueAtTime(0.001, start + 0.25);
+    oscillator.connect(volume);
+    volume.connect(context.destination);
+    oscillator.start(start);
+    oscillator.stop(start + 0.26);
+    oscillator.onended = () => {
+      oscillator.disconnect();
+      volume.disconnect();
+    };
   }
 }
 
-function formatClock(timestamp: string) {
-  const date = new Date(timestamp);
-  if (Number.isNaN(date.getTime())) return "";
-  return date.toLocaleTimeString("ca-ES", {
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    timeZone: DEFAULT_TIMEZONE,
-  });
-}
+export default function AlertCenter({
+  alerts,
+  eventId,
+  onEnablePush,
+  showControls = true,
+  projection = false,
+}: {
+  alerts: LiveAlert[];
+  eventId: string;
+  onEnablePush: () => void;
+  showControls?: boolean;
+  projection?: boolean;
+}) {
+  const [visible, setVisible] = useState<LiveAlert[]>([]);
+  const [enabled, setEnabled] = useState(
+    soundEnabled && audioContext?.state === "running",
+  );
+  const [audioError, setAudioError] = useState("");
+  const seen = useRef(new Set<string>());
+  const ready = useRef(false);
+  const initialized = useRef(false);
+  const timers = useRef(new Map<string, ReturnType<typeof setTimeout>>());
+  const storageKey = `hackeps-alerts-seen:${eventId}`;
 
-export default function AlertCenter() {
-  const [alerts, setAlerts] = useState<AlertMessage[]>([]);
-  const [connectionState, setConnectionState] = useState<ConnectionState>("connecting");
-  const dismissTimers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
-  const audioContextRef = useRef<AudioContext | null>(null);
-
-  const clearTimer = useCallback((id: string) => {
-    const timer = dismissTimers.current.get(id);
-    if (timer) {
-      clearTimeout(timer);
-      dismissTimers.current.delete(id);
-    }
+  const dismiss = useCallback((id: string) => {
+    clearTimeout(timers.current.get(id));
+    timers.current.delete(id);
+    setVisible((current) => current.filter((alert) => alert.id !== id));
   }, []);
 
-  const removeAlert = useCallback(
-    (id: string) => {
-      clearTimer(id);
-      setAlerts((prev) => prev.filter((alert) => alert.id !== id));
-    },
-    [clearTimer]
-  );
-
-  const scheduleDismiss = useCallback(
-    (id: string) => {
-      clearTimer(id);
-      const timer = setTimeout(() => removeAlert(id), AUTO_DISMISS_MS);
-      dismissTimers.current.set(id, timer);
-    },
-    [clearTimer, removeAlert]
-  );
-
-  const playAlertTone = useCallback(() => {
-    if (typeof window === "undefined") return;
-    const AudioCtx = window.AudioContext || (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-    if (!AudioCtx) return;
-
-    if (!audioContextRef.current) {
-      audioContextRef.current = new AudioCtx();
-    }
-
-    const ctx = audioContextRef.current;
-    if (ctx.state === "suspended") {
-      ctx.resume().catch(() => undefined);
-    }
-
-    const oscillator = ctx.createOscillator();
-    const gainNode = ctx.createGain();
-    oscillator.type = "triangle";
-    oscillator.frequency.value = 760;
-    gainNode.gain.value = 0.2;
-
-    oscillator.connect(gainNode);
-    gainNode.connect(ctx.destination);
-
-    const now = ctx.currentTime;
-    gainNode.gain.setValueAtTime(0.2, now);
-    gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 1.2);
-
-    oscillator.start(now);
-    oscillator.stop(now + 1.2);
-  }, []);
-
-  const handleIncomingAlert = useCallback(
-    (alert: AlertMessage) => {
-      setAlerts((prev) => {
-        const filtered = prev.filter((item) => item.id !== alert.id);
-        return [alert, ...filtered].slice(0, MAX_VISIBLE_ALERTS);
-      });
-      playAlertTone();
-    },
-    [playAlertTone]
-  );
-
-  useEffect(() => {
-    alerts.forEach((alert) => {
-      if (!dismissTimers.current.has(alert.id)) {
-        scheduleDismiss(alert.id);
-      }
-    });
-  }, [alerts, scheduleDismiss]);
-
-  useEffect(() => {
-    const timers = dismissTimers.current;
-    let ws: WebSocket | null = null;
-    let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
-    let mounted = true;
-
-    const connect = () => {
-      if (!mounted) {
-        return;
-      }
-      setConnectionState("connecting");
-      const url = buildWsUrl(WEBSOCKET_PATH);
-      if (!url) {
-        setConnectionState("closed");
-        return;
-      }
-
-      ws = new WebSocket(url);
-
-      ws.onopen = () => setConnectionState("open");
-      ws.onmessage = (event) => {
+  const receive = useCallback(
+    (incoming: LiveAlert[], snapshot = false) => {
+      if (!initialized.current) {
+        initialized.current = true;
         try {
-          const data = JSON.parse(event.data);
-          if (data?.type === "alert_history" && Array.isArray(data.payload)) {
-            setAlerts(data.payload.slice(0, MAX_VISIBLE_ALERTS));
-          } else if (data?.type === "alert" && data.payload) {
-            handleIncomingAlert(data.payload as AlertMessage);
-          } else if (data?.type === "alert_removed" && data.payload?.id) {
-            removeAlert(String(data.payload.id));
+          const stored = JSON.parse(
+            sessionStorage.getItem(storageKey) || "null",
+          );
+          if (Array.isArray(stored)) {
+            seen.current = new Set(stored);
+            ready.current = true;
           }
-        } catch (error) {
-          console.warn("Invalid alert message", error);
+        } catch {
+          /* Restricted storage must not prevent notifications. */
         }
-      };
-      ws.onclose = () => {
-        setConnectionState("closed");
-        if (mounted) {
-          reconnectTimer = setTimeout(connect, 4000);
-        }
-      };
-      ws.onerror = () => {
-        ws?.close();
-      };
-    };
-
-    connect();
-
-    return () => {
-      mounted = false;
-      if (reconnectTimer) {
-        clearTimeout(reconnectTimer);
       }
-      ws?.close();
-      timers.forEach((timer) => clearTimeout(timer));
-      timers.clear();
+      const fresh = incoming.filter(
+        (alert) =>
+          alert.id &&
+          !seen.current.has(alert.id) &&
+          (!alert.expires_at || Date.parse(alert.expires_at) > Date.now()),
+      );
+      incoming.forEach((alert) => seen.current.add(alert.id));
+      const show = ready.current || !snapshot;
+      ready.current = true;
+      try {
+        sessionStorage.setItem(
+          storageKey,
+          JSON.stringify([...seen.current].slice(-500)),
+        );
+      } catch {
+        /* Session-only fallback. */
+      }
+      if (!show || !fresh.length) return;
+      if (projection) {
+        setVisible((current) => [...current, ...fresh]);
+      } else {
+        const notifications = fresh.slice(-3);
+        setVisible((current) => [...notifications.reverse(), ...current].slice(0, 3));
+        playTone();
+      }
+    },
+    [dismiss, storageKey, projection],
+  );
+
+  useEffect(() => {
+    receive(alerts, true);
+  }, [alerts, receive]);
+  useEffect(() => {
+    if (projection) return;
+    visible.forEach((alert) => {
+      if (!timers.current.has(alert.id))
+        timers.current.set(
+          alert.id,
+          setTimeout(() => dismiss(alert.id), DISPLAY_MS),
+        );
+    });
+  }, [visible, dismiss, projection]);
+  useEffect(() => {
+    const timerMap = timers.current;
+    const onMessage = (event: MessageEvent) => {
+      if (
+        event.data?.type === "hackeps-alert" &&
+        String(event.data.event_id) === eventId
+      ) {
+        receive([event.data.alert]);
+        // Tell the service worker the alert was shown, so it skips the
+        // system notification only when a Live page really displayed it.
+        event.ports?.[0]?.postMessage("shown");
+      }
     };
-  }, [handleIncomingAlert, removeAlert]);
+    navigator.serviceWorker?.addEventListener("message", onMessage);
+    return () => {
+      timerMap.forEach(clearTimeout);
+      timerMap.clear();
+      navigator.serviceWorker?.removeEventListener("message", onMessage);
+    };
+  }, [eventId, receive]);
 
-  const statusLabel = useMemo(() => {
-    switch (connectionState) {
-      case "open":
-        return "Canal d'alertes connectat";
-      case "connecting":
-        return "Connectant canal d'alertes…";
-      default:
-        return "Canal d'alertes desconnectat";
+  async function toggleSound() {
+    if (enabled) {
+      soundEnabled = false;
+      setEnabled(false);
+      return;
     }
-  }, [connectionState]);
-
-  if (!alerts.length && connectionState === "open") {
-    return null;
+    try {
+      audioContext ??= new AudioContext();
+      await audioContext.resume();
+      if (audioContext.state !== "running")
+        throw new Error("Audio unavailable");
+      soundEnabled = true;
+      setEnabled(true);
+      setAudioError("");
+      playTone();
+    } catch {
+      setAudioError(
+        "El navegador no ha pogut activar el so. Torna-ho a provar.",
+      );
+    }
   }
 
   return (
-    <div className="pointer-events-none fixed bottom-4 right-4 z-[9999] flex flex-col gap-3">
-      {alerts.map((alert) => {
-        const meta = LEVEL_META[alert.level];
-        const Icon = meta.icon;
-        return (
-          <div
-            key={alert.id}
-            className={cn(
-              "pointer-events-auto w-80 rounded-2xl border p-4 shadow-2xl backdrop-blur-lg transition-all duration-300",
-              meta.className
-            )}
-            role="status"
-            aria-live="assertive"
-          >
-            <div className="flex items-start gap-3">
-              <div className="mt-1 rounded-full bg-black/20 p-2">
-                <Icon className="h-5 w-5" />
-              </div>
-              <div className="flex-1 space-y-1">
-                <div className="flex items-center gap-2">
-                  <span className={cn("rounded-full px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide", meta.badgeClass)}>
-                    {meta.label}
-                  </span>
-                  <span className="text-xs uppercase text-white/70">{formatClock(alert.created_at)}</span>
-                </div>
-                {alert.title && <p className="text-sm font-semibold text-white">{alert.title}</p>}
-                <p className="text-base text-white/90">{alert.message}</p>
-              </div>
-              <button
-                type="button"
-                onClick={() => removeAlert(alert.id)}
-                className="rounded-full p-1 text-white/70 transition hover:bg-white/20 hover:text-white"
-                aria-label="Tancar alerta"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-          </div>
-        );
-      })}
-      <div
-        className={cn(
-          "pointer-events-auto rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-wide backdrop-blur",
-          connectionState === "open"
-            ? "border-emerald-400/50 bg-emerald-600/20 text-emerald-100"
-            : connectionState === "connecting"
-            ? "border-amber-400/50 bg-amber-600/30 text-amber-100"
-            : "border-red-400/50 bg-red-700/30 text-red-100"
-        )}
+    <>
+      {showControls && <div
+        className="live-notification-controls"
+        aria-label="Preferències dels avisos"
       >
-        {statusLabel}
-      </div>
-    </div>
+        <button type="button" onClick={toggleSound} aria-pressed={enabled}>
+          {enabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
+          {enabled ? "So activat" : "Activar so"}
+        </button>
+        <button type="button" onClick={onEnablePush}>
+          <Bell size={16} />
+          Notificacions push
+        </button>
+        {audioError && <span role="status">{audioError}</span>}
+      </div>}
+      {projection ? (
+        visible[0] && <ScreenAnnouncement key={visible[0].id} alert={visible[0]} onDismiss={dismiss} onShow={playTone} />
+      ) : <div
+        className="live-notification-stack"
+        aria-live="polite"
+        aria-relevant="additions"
+      >
+        {visible.map((alert) => (
+          <div
+            className={`live-toast ${alert.level}`}
+            key={alert.id}
+            role={alert.level === "danger" ? "alert" : "status"}
+          >
+            <span className="live-toast-icon" aria-hidden="true">
+              <Bell size={22} />
+            </span>
+            <div>
+              <span className="live-toast-source">HackEPS · Ara</span>
+              <strong>{alert.title}</strong>
+              <p>{alert.message}</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => dismiss(alert.id)}
+              aria-label={`Tancar avís: ${alert.title}`}
+            >
+              <X size={18} />
+            </button>
+          </div>
+        ))}
+      </div>}
+    </>
   );
 }

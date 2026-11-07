@@ -1,0 +1,18 @@
+.youtube-broadcast {
+  width: 100%;
+  margin: 0 0 32px;
+  border: 2px solid var(--ink);
+  background: var(--ink);
+  color: white;
+}
+.youtube-broadcast-heading {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  flex-wrap: wrap;
+}
+.youtube-broadcast-heading span { color: #ff955e; font-weight: 700; }
+.farm-live .youtube-broadcast-heading h2 { margin: 0; font-size: 18px; flex: 1; }
+.youtube-broadcast-heading a { font-size: 12px; }
+.youtube-broadcast iframe { display: block; width: 100%; aspect-ratio: 16 / 9; min-height: 200px; border: 0; }

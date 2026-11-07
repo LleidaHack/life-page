@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Space_Mono } from "next/font/google";
 import "./globals.css";
-import AlertCenter from "@/components/AlertCenter";
+
 
 const mono = Space_Mono({
   subsets: ["latin"],
@@ -10,8 +10,8 @@ const mono = Space_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "HackEPS2025 Live Page",
-  description: "Live page for HackEPS2025 event showing schedule, challenges, map, and more.",
+  title: "HackEPS Live Page",
+  description: "Live page for HackEPS event showing schedule, challenges, map, and more.",
 };
 
 export default function RootLayout({
@@ -21,9 +21,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ca">
-      <body className={`${mono.variable} antialiased bg-ola`}>
+      <body className={`${mono.variable} antialiased `}>
         {children}
-        <AlertCenter />
+
       </body>
     </html>
   );
