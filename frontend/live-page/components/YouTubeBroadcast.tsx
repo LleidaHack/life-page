@@ -1,47 +1,35 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import "./youtube-broadcast.css";
 
-type Broadcast = { video_id: string; title: string };
+function videoId(value: string): string | null {
+  try {
+    const url = new URL(value);
+    if (url.protocol !== "https:" && url.protocol !== "http:") return null;
+    const parts = url.pathname.split("/").filter(Boolean);
+    const id = url.hostname === "youtu.be" ? parts[0]
+      : ["youtube.com", "www.youtube.com", "m.youtube.com"].includes(url.hostname)
+        ? url.pathname === "/watch" ? url.searchParams.get("v")
+          : ["live", "embed", "shorts"].includes(parts[0]) ? parts[1] : null
+        : null;
+    return id && /^[\w-]{11}$/.test(id) ? id : null;
+  } catch { return null; }
+}
 
-export default function YouTubeBroadcast({ api, eventId }: { api: string; eventId: string }) {
-  const [broadcast, setBroadcast] = useState<Broadcast | null>(null);
-  useEffect(() => {
-    const controller = new AbortController();
-    let timer: ReturnType<typeof setTimeout>;
-    async function refresh() {
-      try {
-        const response = await fetch(`${api}/v1/operations/${eventId}/broadcast`, {
-          cache: "no-store", signal: controller.signal,
-        });
-        if (!response.ok) throw new Error("Broadcast unavailable");
-        const { live } = await response.json();
-        if (!controller.signal.aborted) {
-          setBroadcast(live && /^[\w-]{11}$/.test(live.video_id) ? live : null);
-        }
-      } catch {
-        if (!controller.signal.aborted) setBroadcast(null);
-      } finally {
-        if (!controller.signal.aborted) timer = setTimeout(refresh, 30000);
-      }
-    }
-    void refresh();
-    return () => { controller.abort(); clearTimeout(timer); };
-  }, [api, eventId]);
-
-  if (!broadcast) return null;
+export default function YouTubeBroadcast({ url, enabled }: { url?: string | null; enabled: boolean }) {
+  const id = enabled && url ? videoId(url) : null;
+  if (!id) return null;
   return (
     <section className="youtube-broadcast" aria-label="Retransmissió de LleidaHack">
       <div className="youtube-broadcast-heading">
-        <span>● En directe</span>
-        <h2>{broadcast.title}</h2>
-        <a href={`https://www.youtube.com/watch?v=${broadcast.video_id}`} target="_blank" rel="noreferrer">Obrir a YouTube ↗</a>
+        <span>● Retransmissió</span>
+        <h2>HackEPS en directe</h2>
+        <a href={`https://www.youtube.com/watch?v=${id}`} target="_blank" rel="noreferrer">Obrir a YouTube ↗</a>
       </div>
       <iframe
-        key={broadcast.video_id}
-        src={`https://www.youtube.com/embed/${broadcast.video_id}?autoplay=1&mute=1&playsinline=1&rel=0`}
-        title={broadcast.title}
+        key={id}
+        src={`https://www.youtube.com/embed/${id}?autoplay=1&mute=1&playsinline=1&rel=0`}
+        title="Retransmissió de HackEPS"
         allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
         allowFullScreen
         referrerPolicy="strict-origin-when-cross-origin"

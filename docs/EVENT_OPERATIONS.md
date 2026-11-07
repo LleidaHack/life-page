@@ -30,8 +30,8 @@ The fullscreen display uses a minimal dark layout with a large countdown and thr
 
 The public homepage groups edition artwork and the submission timer in one orange masthead. Stream and next-activity information sit beside Wi-Fi and contact details, followed by an unboxed agenda and the LleidaCoins ranking. Its scoped styles preserve the independent fullscreen display.
 
-## Automatic live broadcast
+## Manual live broadcast without API credentials
 
-The home page checks the backend broadcast endpoint every 30 seconds, including during judging. A confirmed public, embeddable YouTube live broadcast appears automatically and starts muted with inline playback; viewers can enable sound in the player. Browser autoplay policies may still require interaction.
+In Gestió → Comunicació → Live, paste the YouTube video URL, enable **Mostrar retransmissió**, and save. Supported links: `youtube.com/watch?v=VIDEO_ID`, `youtu.be/VIDEO_ID`, and YouTube `/live/`, `/embed/` or `/shorts/` video links. Channel links are not video links. Disable the switch and save when the broadcast ends.
 
-Configure `YOUTUBE_API_KEY` on the backend and optionally `YOUTUBE_CHANNEL_HANDLE` (default: `LleidaHack`). Redis must be available. Discovery of a new broadcast runs every 900 seconds by default to respect search quota; `YOUTUBE_DISCOVERY_SECONDS` can adjust this interval subject to provider quota. Existing broadcasts are checked every 30 seconds. Missing credentials or an unavailable provider hide the player. The local demo does not include a YouTube API key.
+The home page displays the selected video during hacking and judging, with muted autoplay and inline playback. Viewers can enable sound in the player; browser autoplay policies may require interaction. Stream status is controlled by the organizer, not detected automatically. The backend persists `stream_enabled` (default false) alongside `stream_url` in event configuration; deploy the backend update before the management and Live clients. No database migration or YouTube API key is required. Existing channel links remain available in the channel card.

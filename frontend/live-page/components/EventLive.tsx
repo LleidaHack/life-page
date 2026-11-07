@@ -32,6 +32,7 @@ type LiveEvent = {
   map_notes: string;
   slack_url: string | null;
   stream_url?: string | null;
+  stream_enabled?: boolean;
   wifi_name?: string;
   wifi_instructions?: string;
   wifi_guide_url?: string | null;
@@ -298,7 +299,7 @@ export default function EventLive({ view = "home" }: { view?: string }) {
             {push}
           </p>
         )}
-        {view === "home" && <YouTubeBroadcast api={api} eventId={eventId} />}
+        {view === "home" && <YouTubeBroadcast url={data.stream_url} enabled={data.stream_enabled ?? false} />}
         {!judging && (view === "home" || fullscreen) && (
           <>
             <section
