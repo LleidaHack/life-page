@@ -6,7 +6,7 @@ import CompanyLogo from "./CompanyLogo";
 import "./live-theme.css";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { liveApi } from "@/lib/liveEvent";
+import { liveApi, resolveEventId } from "@/lib/liveEvent";
 import { remainingSeconds, formatRemaining } from "@/lib/companyTimer.mjs";
 import "./company-portal.css";
 
@@ -265,9 +265,9 @@ export default function CompanyPortal() {
     [error, setError] = useState(""),
     [busy, setBusy] = useState(false);
   const [events, setEvents] = useState<{ id: number; name: string }[]>([]),
-    [eventId, setEventId] = useState("");
+    [eventId, setEventId] = useState(""),
+    [loadingEvent, setLoadingEvent] = useState(false);
   const [data, setData] = useState<Snapshot | null>(null),
-    [room, setRoom] = useState(""),
     [view, setView] = useState("now"),
     [selected, setSelected] = useState<number | null>(null),
     [comparison, setComparison] = useState<number[]>([]),
@@ -296,15 +296,25 @@ export default function CompanyPortal() {
   useEffect(() => {
     if (!token) return;
     let active = true;
-    api<{ id: number; name: string }[]>("/events", token)
-      .then((rows) => {
+    setLoadingEvent(true);
+    Promise.all([
+      resolveEventId(),
+      api<{ id: number; name: string }[]>("/events", token),
+    ])
+      .then(([currentId, rows]) => {
         if (active) {
-          setEvents(rows);
-          setEventId(String(rows[0]?.id || ""));
+          const currentEvent = rows.find(
+            (event) => String(event.id) === currentId,
+          );
+          setEvents(currentEvent ? [currentEvent] : []);
+          setEventId(currentEvent ? currentId : "");
         }
       })
       .catch((e) => {
         if (active) setError(e.message);
+      })
+      .finally(() => {
+        if (active) setLoadingEvent(false);
       });
     return () => {
       active = false;
@@ -352,7 +362,7 @@ export default function CompanyPortal() {
     dirty.current = false;
     action();
   }
-  const activeRoom = data?.rooms.includes(room) ? room : data?.rooms[0] || "";
+  const activeRoom = data?.rooms[0] || "";
   const current = data?.presentations.find(
     (p) => p.room === activeRoom && p.state === "presenting",
   );
@@ -526,54 +536,26 @@ export default function CompanyPortal() {
           </form>
         ) : (
           <>
-            <label>
-              Esdeveniment
-              <select
-                value={eventId}
-                onChange={(e) =>
-                  navigate(() => {
-                    setEventId(e.target.value);
-                    setData(null);
-                    setSelected(null);
-                    setComparison([]);
-                    setRoom("");
-                  })
-                }
-              >
-                {events.map((event) => (
-                  <option key={event.id} value={event.id}>
-                    {event.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-            {!events.length && (
+            {loadingEvent ? (
+              <p role="status">Preparant el teu espai…</p>
+            ) : !events.length && !error ? (
               <p>
-                No tens cap esdeveniment assignat. Contacta amb l’organització.
+                No tens accés a l’esdeveniment actiu. Contacta amb
+                l’organització.
+              </p>
+            ) : null}
+            {events[0] && (
+              <p className="company-assignment">
+                {events[0].name}
+                {data && activeRoom
+                  ? ` · ${data.room_labels[activeRoom] || activeRoom}`
+                  : ""}
               </p>
             )}
             {data && (
               <>
                 {view === "now" && (
                   <>
-                    <label>
-                      Sala
-                      <select
-                        value={activeRoom}
-                        onChange={(e) =>
-                          navigate(() => {
-                            setRoom(e.target.value);
-                            setSelected(null);
-                          })
-                        }
-                      >
-                        {data.rooms.map((value) => (
-                          <option key={value} value={value}>
-                            {data.room_labels[value] || value}
-                          </option>
-                        ))}
-                      </select>
-                    </label>
                     <section className="company-card company-timer">
                       <span>
                         {current
