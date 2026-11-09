@@ -43,10 +43,29 @@ type Snapshot = {
     group_id: number;
     room: string;
     state: string;
+    version: number;
+    duration_seconds: number;
     started_at: string | null;
     scheduled_at: string | null;
   }[];
 };
+type TimerAction = "start" | "extend" | "finish";
+type PendingControl = {
+  eventId: string;
+  presentationId: number;
+  action: TimerAction;
+  version: number;
+  operation_id: string;
+};
+type ControlResult = {
+  id: number;
+  state: string;
+  version: number;
+  started_at: string | null;
+  duration_seconds: number;
+  next_team: string | null;
+};
+
 class PortalError extends Error {
   constructor(
     public status: number,
@@ -56,6 +75,16 @@ class PortalError extends Error {
       typeof detail === "string"
         ? (
             {
+              "Presentation changed; refresh first":
+                "Un altre dispositiu ha modificat la presentació. Revisa l’estat actual abans de continuar.",
+              "Scan the team into the room before controlling its presentation":
+                "L’organització ha d’escanejar l’equip abans d’iniciar la presentació.",
+              "Presentation timer is already running":
+                "El cronòmetre ja està en marxa.",
+              "Start the presentation timer first":
+                "Inicia primer el cronòmetre.",
+              "Judging is not open or room is paused":
+                "Les presentacions no estan obertes o la sala està en pausa.",
               "Invalid company credentials":
                 "Correu o contrasenya incorrectes.",
               "Company session expired":
@@ -109,12 +138,14 @@ function Notes({
   eventId,
   onDirty,
   onSaved,
+  locked,
 }: {
   project: Project;
   token: string;
   eventId: string;
   onDirty: (dirty: boolean) => void;
   onSaved: () => void;
+  locked: boolean;
 }) {
   const [draft, setDraft] = useState(project.note),
     [saved, setSaved] = useState(project.note);
@@ -179,7 +210,7 @@ function Notes({
         Notes
         <textarea
           maxLength={10000}
-          disabled={busy}
+          disabled={busy || locked}
           value={draft.text}
           onChange={(e) => setDraft({ ...draft, text: e.target.value })}
         />
@@ -189,7 +220,7 @@ function Notes({
         <Input
           type="number"
           step={1}
-          disabled={busy}
+          disabled={busy || locked}
           min={0}
           max={10}
           value={draft.score ?? ""}
@@ -204,7 +235,7 @@ function Notes({
       <label>
         <input
           type="checkbox"
-          disabled={busy}
+          disabled={busy || locked}
           checked={draft.favorite}
           onChange={(e) => setDraft({ ...draft, favorite: e.target.checked })}
         />{" "}
@@ -220,6 +251,7 @@ function Notes({
             {conflict.favorite ? "Favorit" : "No favorit"}
           </p>
           <Button
+            disabled={busy || locked}
             onClick={() => {
               if (
                 confirm(
@@ -235,7 +267,7 @@ function Notes({
             Carregar notes desades
           </Button>
           <Button
-            disabled={busy}
+            disabled={busy || locked}
             onClick={() => {
               if (confirm("Substituir les notes desades per la teva versió?"))
                 void save(conflict.version);
@@ -246,7 +278,7 @@ function Notes({
         </div>
       )}
       <Button
-        disabled={!dirty || busy || !!conflict}
+        disabled={!dirty || busy || locked || !!conflict}
         onClick={() => void save()}
       >
         {busy ? "Desant…" : "Desar notes"}
@@ -273,6 +305,12 @@ export default function CompanyPortal() {
     [comparison, setComparison] = useState<number[]>([]),
     [query, setQuery] = useState(""),
     [onlyFavorites, setOnlyFavorites] = useState(false);
+  const [pendingControl, setPendingControl] = useState<PendingControl | null>(
+    null,
+  );
+  const [controlling, setControlling] = useState(false);
+  const [controlError, setControlError] = useState("");
+  const previousCurrent = useRef<number | null>(null);
   const dirty = useRef(false),
     onDirty = useCallback((value: boolean) => {
       dirty.current = value;
@@ -368,14 +406,87 @@ export default function CompanyPortal() {
   );
   const project = data?.projects.find((p) => p.id === selected);
   useEffect(() => {
-    if (selected === null && current) setSelected(current.group_id);
-  }, [selected, current]);
+    const next = current?.group_id ?? null;
+    if (
+      !dirty.current &&
+      (selected === null || selected === previousCurrent.current)
+    ) {
+      setSelected(next);
+    }
+    previousCurrent.current = next;
+  }, [selected, current?.group_id]);
   const remaining = remainingSeconds(
     current?.started_at,
     clock,
     offset.current,
-    data?.duration_seconds || 300,
+    current?.duration_seconds || 300,
   );
+  async function controlPresentation(action: TimerAction) {
+    if (controlling) return;
+    if (action === "finish" && dirty.current) {
+      setControlError("Desa les notes pendents abans de finalitzar la presentació.");
+      return;
+    }
+    if (!pendingControl && (!current || !eventId)) return;
+    if (
+      !pendingControl &&
+      action === "finish" &&
+      !confirm("Finalitzar la presentació i deixar pas al següent equip?")
+    )
+      return;
+    const operation = pendingControl || {
+      eventId,
+      presentationId: current!.id,
+      action,
+      version: current!.version,
+      operation_id: crypto.randomUUID(),
+    };
+    setPendingControl(operation);
+    setControlling(true);
+    setControlError("");
+    try {
+      const result = await api<ControlResult>(
+        `/events/${operation.eventId}/presentations/${operation.presentationId}/action`,
+        token,
+        "POST",
+        {
+          action: operation.action,
+          version: operation.version,
+          operation_id: operation.operation_id,
+        },
+      );
+      setPendingControl(null);
+      setData((previous) =>
+        previous
+          ? {
+              ...previous,
+              presentations: previous.presentations.map((p) =>
+                p.id === result.id ? { ...p, ...result } : p,
+              ),
+            }
+          : previous,
+      );
+      if (operation.action === "finish") setSelected(null);
+      void load().catch(() =>
+        setControlError(
+          "Operació desada. No s’ha pogut actualitzar la cua; es tornarà a consultar automàticament.",
+        ),
+      );
+    } catch (e) {
+      if (
+        e instanceof PortalError &&
+        [400, 401, 403, 404, 409, 422].includes(e.status)
+      ) {
+        setPendingControl(null);
+        void load().catch(() => {});
+      }
+      setControlError(
+        e instanceof Error ? e.message : "No s’ha pogut confirmar l’operació.",
+      );
+    } finally {
+      setControlling(false);
+    }
+  }
   async function authenticate(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
@@ -451,6 +562,7 @@ export default function CompanyPortal() {
                 void api("/logout", token, "POST").catch(() => {});
                 sessionStorage.removeItem("company-portal-session");
                 setToken("");
+                setPendingControl(null);
                 setData(null);
                 setEventId("");
                 setEvents([]);
@@ -552,6 +664,24 @@ export default function CompanyPortal() {
                   : ""}
               </p>
             )}
+            {controlError && (
+              <p className="company-error" role="alert">{controlError}</p>
+            )}
+            {pendingControl && !controlling && (
+              <div className="company-error" role="alert">
+                <p>
+                  No s’ha confirmat l’operació. Reintenta-la per comprovar-ne el
+                  resultat sense duplicar-la.
+                </p>
+                <Button
+                  onClick={() =>
+                    void controlPresentation(pendingControl.action)
+                  }
+                >
+                  Reintentar operació
+                </Button>
+              </div>
+            )}
             {data && (
               <>
                 {view === "now" && (
@@ -559,12 +689,65 @@ export default function CompanyPortal() {
                     <section className="company-card company-timer">
                       <span>
                         {current
-                          ? "Presentació en curs"
-                          : "Esperant la següent presentació"}
+                          ? current.started_at
+                            ? "Presentació en curs"
+                            : "Equip a la sala · pendent d’iniciar"
+                          : "Esperant l’escaneig del següent equip"}
                       </span>
                       <strong>{formatRemaining(remaining)}</strong>
                       {remaining !== null && remaining <= 0 && (
-                        <p>Temps finalitzat</p>
+                        <p>
+                          Temps previst esgotat. Podeu ampliar-lo o finalitzar
+                          quan l’equip acabi.
+                        </p>
+                      )}
+                      {current && (
+                        <div className="company-timer-actions">
+                          <p>
+                            {
+                              data.projects.find(
+                                (p) => p.id === current.group_id,
+                              )?.team
+                            }
+                          </p>
+                          {!current.started_at ? (
+                            <Button
+                              disabled={controlling || !!pendingControl}
+                              onClick={() => void controlPresentation("start")}
+                            >
+                              Iniciar 5 minuts
+                            </Button>
+                          ) : (
+                            <Button
+                              disabled={controlling || !!pendingControl}
+                              onClick={() => void controlPresentation("extend")}
+                            >
+                              +1 minut
+                            </Button>
+                          )}
+                          <Button
+                            disabled={controlling || !!pendingControl}
+                            onClick={() => void controlPresentation("finish")}
+                          >
+                            Finalitzar presentació
+                          </Button>
+                          {controlling && (
+                            <p role="status">Actualitzant la presentació…</p>
+                          )}
+                        </div>
+                      )}
+                      {!current && (
+                        <p>
+                          {(() => {
+                            const next = data.presentations.find(
+                              (p) =>
+                                p.room === activeRoom && p.state === "called",
+                            );
+                            return next
+                              ? `Equip avisat: ${data.projects.find((p) => p.id === next.group_id)?.team || "següent equip"}. L’organització l’ha d’escanejar per entrar.`
+                              : "L’organització prepararà el següent equip.";
+                          })()}
+                        </p>
                       )}
                       {current && selected !== current.group_id && (
                         <Button
@@ -625,6 +808,9 @@ export default function CompanyPortal() {
                           token={token}
                           eventId={eventId}
                           onDirty={onDirty}
+                          locked={
+                            controlling || pendingControl?.action === "finish"
+                          }
                           onSaved={() =>
                             void load().catch(() =>
                               setError(
