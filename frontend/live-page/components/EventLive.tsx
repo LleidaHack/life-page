@@ -305,6 +305,7 @@ export default function EventLive({ view = "home" }: { view?: string }) {
             <Link href="/map">Mapa</Link>
             <Link href="/help">Ajuda</Link>
             <Link href="/leaderboard">LleidaCoins</Link>
+            <Link href="/companies">Empreses</Link>
           </nav>
         </header>
         <div className="farm-page-content" aria-busy={!error}>
@@ -369,6 +370,7 @@ export default function EventLive({ view = "home" }: { view?: string }) {
             <Link href="/map">Mapa</Link>
             <Link href="/help">Ajuda</Link>
             <Link href="/leaderboard">LleidaCoins</Link>
+            <Link href="/companies">Empreses</Link>
             {judging && <Link href="/judging">Presentacions</Link>}
             <Link href="/fullscreen" onClick={enterFullscreen}>Pantalla completa</Link>
           </nav>

@@ -1,0 +1,120 @@
+.company-portal {
+  min-height: 100dvh;
+  background: #f5f3ef;
+  color: #202b24;
+  font-family: var(--font-mono), monospace;
+}
+.company-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+  justify-content: space-between;
+  background: #214432;
+  color: white;
+  padding: 20px;
+}
+.company-content {
+  max-width: 1100px;
+  margin: auto;
+  padding: 24px 20px 110px;
+}
+.company-card {
+  background: white;
+  border: 1px solid #d6ddcf;
+  border-radius: 16px;
+  padding: 24px;
+  margin: 20px 0;
+  min-width: 0;
+}
+.company-card h1 {
+  font-size: 1.8rem;
+}
+.company-card h2 {
+  font-size: 1.3rem;
+}
+.company-card p {
+  margin: 14px 0;
+}
+.company-portal label {
+  display: block;
+  margin: 16px 0;
+}
+.company-portal input:not([type="checkbox"]),
+.company-portal select,
+.company-portal textarea {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  border: 1px solid #99a68f;
+  border-radius: 8px;
+  padding: 12px;
+  min-height: 44px;
+  background: white;
+  color: #202b24;
+}
+.company-portal textarea {
+  min-height: 180px;
+}
+.company-portal button {
+  min-height: 44px;
+  margin: 4px;
+  background: #214432;
+  color: white;
+  white-space: normal;
+  cursor: pointer;
+}
+.company-portal button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.company-bottom {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
+  display: flex;
+  justify-content: center;
+  background: white;
+  border-top: 1px solid #ccd5c5;
+  z-index: 30;
+}
+.company-bottom button {
+  flex: 1;
+  max-width: 240px;
+}
+.company-bottom button[aria-pressed="true"] {
+  outline: 3px solid #bca64e;
+}
+.company-timer strong {
+  display: block;
+  font-size: 3rem;
+  font-variant-numeric: tabular-nums;
+}
+.company-description {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.company-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  gap: 16px;
+}
+.company-conflict,
+.company-error {
+  padding: 16px;
+  border: 2px solid #b56d24;
+  background: #fff2da;
+  border-radius: 12px;
+}
+.company-login {
+  max-width: 540px;
+  margin: 30px auto;
+}
+.company-portal a {
+  text-decoration: underline;
+}
+.company-header a {
+  color: white;
+}
