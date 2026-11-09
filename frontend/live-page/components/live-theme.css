@@ -1,0 +1,8 @@
+/* Shared visual identity for the public Live site and private company portal. */
+.farm-live,
+.company-portal {
+  --ink: #2e2e2e;
+  --orange: #ff7430;
+  --sky: #94cbf5;
+  --paper: #fff;
+}

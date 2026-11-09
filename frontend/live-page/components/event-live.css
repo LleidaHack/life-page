@@ -1,9 +1,5 @@
 /* Match the HackEPS edition: Space Mono, orange header, sky and original artwork. */
 .farm-live {
-  --ink: #2e2e2e;
-  --orange: #ff7430;
-  --sky: #94cbf5;
-  --paper: #fff;
   min-height: 100vh;
   background: var(--sky);
   color: var(--ink);
@@ -711,4 +707,15 @@
 .farm-challenges-grid article h2,
 .farm-challenges-grid article p {
   overflow-wrap: anywhere;
+}
+
+.challenge-company-brand { margin-bottom: 20px; }
+.challenge-company-brand .company-logo {
+  display: block;
+  width: auto;
+  max-width: min(100%, 180px);
+  height: 64px;
+  object-fit: contain;
+  object-position: left center;
+  margin-bottom: 16px;
 }
