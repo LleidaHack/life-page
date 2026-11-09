@@ -1,5 +1,4 @@
-import EventLive from "@/components/EventLive";
-
+// The persistent route-group layout renders the Live view.
 export default function Page() {
-  return <EventLive view="leaderboard" />;
+  return null;
 }

@@ -77,7 +77,9 @@ export default function EventLive({ view = "home" }: { view?: string }) {
   const closeGame = useCallback(() => setGame(false), []);
   useEffect(() => {
     setRoom(new URLSearchParams(window.location.search).get("room") || "");
-  }, []);
+    setGame(false);
+    setSearch("");
+  }, [view]);
   useEffect(() => {
     if (eventId) return;
     let active = true;
@@ -292,7 +294,22 @@ export default function EventLive({ view = "home" }: { view?: string }) {
   if (!data)
     return (
       <main className="farm-live">
-        <p role="status">{error || "Carregant HackEPS Live…"}</p>
+        <AmbientScenes />
+        <header>
+          <Link href="/" className="farm-brand">
+            <img src="/hackeps/isotip.svg" alt="HackEPS" width={75} height={48} />
+          </Link>
+          <nav aria-label="Navegació">
+            <Link href="/challenges">Reptes</Link>
+            <Link href="/schedule">Agenda</Link>
+            <Link href="/map">Mapa</Link>
+            <Link href="/help">Ajuda</Link>
+            <Link href="/leaderboard">LleidaCoins</Link>
+          </nav>
+        </header>
+        <div className="farm-page-content" aria-busy={!error}>
+          <p className="farm-status" role="status">{error || "Carregant HackEPS Live…"}</p>
+        </div>
       </main>
     );
   const left = data.deadline
