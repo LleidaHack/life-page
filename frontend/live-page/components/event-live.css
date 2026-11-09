@@ -699,3 +699,16 @@
 .farm-live .farm-grid.farm-judging-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 @media (max-width: 1000px) { .farm-live .farm-grid.farm-judging-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 640px) { .farm-live .farm-grid.farm-judging-grid { grid-template-columns: minmax(0, 1fr); } }
+
+.farm-challenges-grid .challenge-company {
+  margin: 0 0 0.6rem;
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+.farm-challenges-grid article h2,
+.farm-challenges-grid article p {
+  overflow-wrap: anywhere;
+}

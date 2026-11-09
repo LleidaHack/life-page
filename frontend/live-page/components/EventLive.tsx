@@ -40,6 +40,7 @@ type LiveEvent = {
   activities: Activity[];
   challenges: {
     id: string;
+    company?: string;
     title: string;
     description: string;
     resources: { title: string; url: string }[];
@@ -436,6 +437,7 @@ export default function EventLive({ view = "home" }: { view?: string }) {
             <div className="farm-grid farm-challenges-grid">
               {data.challenges.map((c) => (
                 <article key={c.id}>
+                  {c.company && <p className="challenge-company">{c.company}</p>}
                   <h2>{c.title}</h2>
                   <p style={{ whiteSpace: "pre-wrap" }}>{c.description}</p>
                   {c.resources?.length > 0 && (
