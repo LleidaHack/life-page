@@ -1,6 +1,9 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
+import CompanyLogo from "./CompanyLogo";
+import "./live-theme.css";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { liveApi } from "@/lib/liveEvent";
@@ -412,6 +415,8 @@ export default function CompanyPortal() {
       <header className="company-header">
         <Link
           href="/"
+          className="company-live-brand"
+          aria-label="HackEPS Live"
           onClick={(e) => {
             if (
               dirty.current &&
@@ -420,9 +425,15 @@ export default function CompanyPortal() {
               e.preventDefault();
           }}
         >
-          HackEPS Live
+          <Image
+            src="/hackeps/isotip.svg"
+            alt="HackEPS"
+            width={64}
+            height={40}
+          />
+          <span>LIVE</span>
         </Link>
-        <span>Portal d’empreses{data ? ` · ${data.company}` : ""}</span>
+        <span className="company-header-title">Portal d’empreses</span>
         {token && (
           <Button
             onClick={() =>
@@ -443,6 +454,15 @@ export default function CompanyPortal() {
         )}
       </header>
       <div className="company-content">
+        {data && (
+          <div className="company-identity">
+            <CompanyLogo name={data.company} />
+            <div>
+              <p className="company-eyebrow">Espai de valoració</p>
+              <h1>{data.company}</h1>
+            </div>
+          </div>
+        )}
         {error && (
           <p className="company-error" role="alert">
             {error}
@@ -452,6 +472,14 @@ export default function CompanyPortal() {
           <p>Carregant…</p>
         ) : !token ? (
           <form className="company-card company-login" onSubmit={authenticate}>
+            <Image
+              className="company-edition-logo"
+              src="/hackeps/logo-taronja.webp"
+              alt="HackEPS"
+              width={140}
+              height={154}
+            />
+            <p className="company-eyebrow">Jurat i empreses</p>
             <h1>
               {invite
                 ? "Crea la contrasenya de l’empresa"
