@@ -37,6 +37,7 @@ type Snapshot = {
   room_labels: Record<string, string>;
   version: number;
   winner_id: number | null;
+  finalized_at: string | null;
   projects: Project[];
   presentations: {
     id: number;
@@ -75,6 +76,12 @@ class PortalError extends Error {
       typeof detail === "string"
         ? (
             {
+              "Company evaluation is finalized; contact the organization":
+                "La valoració està tancada. Contacta amb l’organització per reobrir-la.",
+              "Finish all presentations before closing evaluations":
+                "Cal acabar tots els torns abans de tancar la valoració.",
+              "Select the winner before confirming the decision":
+                "Selecciona primer el projecte guanyador.",
               "Presentation changed; refresh first":
                 "Un altre dispositiu ha modificat la presentació. Revisa l’estat actual abans de continuar.",
               "Scan the team into the room before controlling its presentation":
@@ -308,6 +315,7 @@ export default function CompanyPortal() {
   const [pendingControl, setPendingControl] = useState<PendingControl | null>(
     null,
   );
+  const finalizationAttempt = useRef<{ key: string; id: string } | null>(null);
   const [controlling, setControlling] = useState(false);
   const [controlError, setControlError] = useState("");
   const previousCurrent = useRef<number | null>(null);
@@ -424,7 +432,9 @@ export default function CompanyPortal() {
   async function controlPresentation(action: TimerAction) {
     if (controlling) return;
     if (action === "finish" && dirty.current) {
-      setControlError("Desa les notes pendents abans de finalitzar la presentació.");
+      setControlError(
+        "Desa les notes pendents abans de finalitzar la presentació.",
+      );
       return;
     }
     if (!pendingControl && (!current || !eventId)) return;
@@ -506,6 +516,42 @@ export default function CompanyPortal() {
       setError(
         e instanceof Error ? e.message : "No s’ha pogut iniciar sessió.",
       );
+    } finally {
+      setBusy(false);
+    }
+  }
+  async function finalizeEvaluation() {
+    if (!data?.winner_id || busy || data.finalized_at) return;
+    if (dirty.current) {
+      setControlError("Desa les notes abans de tancar la valoració.");
+      return;
+    }
+    if (
+      !confirm(
+        "Tancar la valoració i confirmar el guanyador? Les notes i la selecció quedaran bloquejades. Només l’organització ho podrà reobrir.",
+      )
+    )
+      return;
+    const key = JSON.stringify([eventId, data.version, data.winner_id]);
+    if (finalizationAttempt.current?.key !== key)
+      finalizationAttempt.current = { key, id: crypto.randomUUID() };
+    setBusy(true);
+    setControlError("");
+    try {
+      await api(`/events/${eventId}/finalize`, token, "POST", {
+        version: data.version,
+        group_id: data.winner_id,
+        operation_id: finalizationAttempt.current.id,
+      });
+      finalizationAttempt.current = null;
+      await load();
+    } catch (e) {
+      setControlError(
+        e instanceof Error
+          ? e.message
+          : "No s’ha pogut confirmar el tancament. Actualitza i comprova’n l’estat.",
+      );
+      void load().catch(() => {});
     } finally {
       setBusy(false);
     }
@@ -664,8 +710,49 @@ export default function CompanyPortal() {
                   : ""}
               </p>
             )}
+            {data && (
+              <section
+                className="company-card"
+                aria-label="Tancament de la valoració"
+              >
+                {data.finalized_at ? (
+                  <p role="status">
+                    Valoració tancada · Guanyador:{" "}
+                    {data.projects.find((p) => p.id === data.winner_id)
+                      ?.title || "Equip seleccionat"}
+                    . Contacta amb l’organització si cal corregir-la.
+                  </p>
+                ) : (
+                  <>
+                    <p>
+                      Guanyador proposat:{" "}
+                      {data.projects.find((p) => p.id === data.winner_id)
+                        ?.title || "Encara no seleccionat"}
+                    </p>
+                    <p>
+                      Selecciona’l a Comparar i tanca la valoració quan tots els
+                      equips hagin acabat.
+                    </p>
+                    <Button
+                      disabled={
+                        busy ||
+                        !data.winner_id ||
+                        data.presentations.some(
+                          (p) => !["done", "absent"].includes(p.state),
+                        )
+                      }
+                      onClick={() => void finalizeEvaluation()}
+                    >
+                      Confirmar guanyador i tancar valoració
+                    </Button>
+                  </>
+                )}
+              </section>
+            )}
             {controlError && (
-              <p className="company-error" role="alert">{controlError}</p>
+              <p className="company-error" role="alert">
+                {controlError}
+              </p>
             )}
             {pendingControl && !controlling && (
               <div className="company-error" role="alert">
@@ -809,7 +896,10 @@ export default function CompanyPortal() {
                           eventId={eventId}
                           onDirty={onDirty}
                           locked={
-                            controlling || pendingControl?.action === "finish"
+                            busy ||
+                            !!data.finalized_at ||
+                            controlling ||
+                            pendingControl?.action === "finish"
                           }
                           onSaved={() =>
                             void load().catch(() =>
@@ -922,7 +1012,7 @@ export default function CompanyPortal() {
                             </p>
                             <p>{p.note.favorite ? "★ Favorit" : ""}</p>
                             <Button
-                              disabled={busy}
+                              disabled={busy || !!data.finalized_at}
                               onClick={() => void chooseWinner(p.id)}
                             >
                               {data.winner_id === p.id
