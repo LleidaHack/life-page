@@ -1,6 +1,5 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
-import Link from "next/link";
 import Image from "next/image";
 import CompanyLogo from "./CompanyLogo";
 import "./live-theme.css";
@@ -309,7 +308,6 @@ export default function CompanyPortal() {
   const [data, setData] = useState<Snapshot | null>(null),
     [view, setView] = useState("now"),
     [selected, setSelected] = useState<number | null>(null),
-    [comparison, setComparison] = useState<number[]>([]),
     [query, setQuery] = useState(""),
     [onlyFavorites, setOnlyFavorites] = useState(false);
   const [pendingControl, setPendingControl] = useState<PendingControl | null>(
@@ -580,26 +578,14 @@ export default function CompanyPortal() {
   return (
     <main className="company-portal">
       <header className="company-header">
-        <Link
-          href="/"
-          className="company-live-brand"
-          aria-label="HackEPS Live"
-          onClick={(e) => {
-            if (
-              dirty.current &&
-              !confirm("Hi ha notes sense desar. Vols descartar-les?")
-            )
-              e.preventDefault();
-          }}
-        >
+        <div className="company-live-brand">
           <Image
             src="/hackeps/isotip.svg"
             alt="HackEPS"
             width={64}
             height={40}
           />
-          <span>LIVE</span>
-        </Link>
+        </div>
         <span className="company-header-title">Portal d’empreses</span>
         {token && (
           <Button
@@ -613,7 +599,6 @@ export default function CompanyPortal() {
                 setEventId("");
                 setEvents([]);
                 setSelected(null);
-                setComparison([]);
               })
             }
           >
@@ -730,8 +715,8 @@ export default function CompanyPortal() {
                         ?.title || "Encara no seleccionat"}
                     </p>
                     <p>
-                      Selecciona’l a Comparar i tanca la valoració quan tots els
-                      equips hagin acabat.
+                      Selecciona’l a Projectes i tanca la valoració quan tots
+                      els equips hagin acabat.
                     </p>
                     <Button
                       disabled={
@@ -969,48 +954,6 @@ export default function CompanyPortal() {
                             >
                               Veure i anotar
                             </Button>
-                            <label>
-                              <input
-                                type="checkbox"
-                                checked={comparison.includes(p.id)}
-                                disabled={
-                                  !comparison.includes(p.id) &&
-                                  comparison.length >= 4
-                                }
-                                onChange={(e) =>
-                                  setComparison(
-                                    e.target.checked
-                                      ? [...comparison, p.id]
-                                      : comparison.filter((id) => id !== p.id),
-                                  )
-                                }
-                              />{" "}
-                              Comparar
-                            </label>
-                          </article>
-                        ))}
-                    </div>
-                  </>
-                )}
-                {view === "compare" && (
-                  <>
-                    <h1>Comparar projectes</h1>
-                    <p>
-                      Selecciona fins a quatre projectes a la llista. La
-                      proposta de guanyador és privada.
-                    </p>
-                    <div className="company-grid">
-                      {data.projects
-                        .filter((p) => comparison.includes(p.id))
-                        .map((p) => (
-                          <article className="company-card" key={p.id}>
-                            <h2>{p.title}</h2>
-                            <p>{p.team}</p>
-                            <p>Puntuació: {p.note.score ?? "—"}</p>
-                            <p className="company-description">
-                              {p.note.text || "Sense notes"}
-                            </p>
-                            <p>{p.note.favorite ? "★ Favorit" : ""}</p>
                             <Button
                               disabled={busy || !!data.finalized_at}
                               onClick={() => void chooseWinner(p.id)}
@@ -1030,7 +973,6 @@ export default function CompanyPortal() {
               {[
                 ["now", "Ara"],
                 ["projects", "Projectes"],
-                ["compare", `Comparar (${comparison.length})`],
               ].map(([key, label]) => (
                 <Button
                   key={key}
