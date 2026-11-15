@@ -1,0 +1,102 @@
+.farm-live .screen-sponsors {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(12px, 4vw, 64px);
+  min-height: 100px;
+  flex-shrink: 0;
+  margin-top: 48px;
+  padding: 24px clamp(12px, 4vw, 48px) 24px;
+  border-top: 1px solid #ffffff25;
+}
+.screen-sponsor-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  flex: 1;
+  min-width: 0;
+  grid-area: 1 / 1;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 600ms ease-in-out;
+}
+.screen-sponsor-brand.is-active { opacity: 1; }
+.screen-sponsor-logo {
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
+.farm-live .screen-sponsor-logo .company-logo {
+  display: block;
+  width: 100%;
+  height: clamp(48px, 7vw, 72px);
+  margin: 0;
+  object-fit: contain;
+}
+.farm-live .screen-sponsor-toggle {
+  display: grid;
+  width: 100%;
+  max-width: 360px;
+  min-width: 0;
+  min-height: 88px;
+  margin: 0 auto;
+  padding: 12px clamp(8px, 2vw, 24px);
+  border: 0;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: none;
+  cursor: pointer;
+}
+.screen-sponsor-toggle:focus-visible { outline: 2px solid #ff955e; outline-offset: 4px; }
+.farm-live .sponsors-powered-by {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex-shrink: 0;
+  padding: 0;
+  text-align: center;
+}
+.farm-live .sponsors-powered-by p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.sponsors-powered-by a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.sponsors-powered-by a:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 4px;
+}
+.farm-live.minimal-screen .sponsors-powered-by {
+  color: #aaa;
+  padding-bottom: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .screen-sponsor-brand { transition: none; }
+}
+
+.sponsors-powered-by .clouding-sponsor {
+  display: inline-flex;
+  align-items: center;
+  padding: 0;
+  background: transparent;
+}
+.sponsors-powered-by .clouding-sponsor img {
+  display: block;
+  width: 90px;
+  height: 64px;
+  object-fit: contain;
+}
+
+.farm-live.minimal-screen .screen-sponsors { padding-bottom: 0; }
+@media (max-width: 480px) {
+  .farm-live .screen-sponsors { gap: 10px; padding-inline: 12px; }
+  .farm-live .screen-sponsor-toggle { min-height: 76px; }
+  .sponsors-powered-by .clouding-sponsor img { width: 70px; height: 50px; }
+}

@@ -14,6 +14,14 @@ if (
 const nextConfig: NextConfig = {
   // Self-contained server only for the Docker image; Vercel uses its own output.
   output: process.env.NEXT_OUTPUT_STANDALONE === "1" ? "standalone" : undefined,
+  async rewrites() {
+    // Local browsers cannot call the production API directly (CORS).
+    // Keep this proxy opt-in and development-only.
+    const target = process.env.API_INTERNAL_BASE_URL?.replace(/\/+$/, "");
+    return process.env.NODE_ENV === "development" && target
+      ? [{ source: "/v1/:path*", destination: `${target}/v1/:path*` }]
+      : [];
+  },
   async headers() {
     return [
       {

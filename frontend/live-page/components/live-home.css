@@ -32,6 +32,12 @@
   font-size: clamp(16px, 2vw, 24px);
   margin: 0 0 28px;
 }
+.farm-live.live-home .home-countdown-logo {
+  display: block;
+  width: clamp(160px, 20vw, 260px);
+  height: auto;
+  margin-bottom: 16px;
+}
 .farm-live.live-home .live-home-intro > div > p {
   display: block;
   font-size: 12px;
