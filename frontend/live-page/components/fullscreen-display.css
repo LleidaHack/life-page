@@ -38,6 +38,14 @@
   color: #bbb;
   text-align: center;
 }
+.farm-live .screen-countdown-logo {
+  display: block;
+  width: clamp(180px, 24vw, 360px);
+  height: auto;
+  max-height: 12svh;
+  object-fit: contain;
+  margin-bottom: 12px;
+}
 .farm-live .screen-timer {
   font-size: clamp(52px, 16vw, 280px);
   line-height: 1.3;
@@ -421,3 +429,7 @@
 }
 .screen-broadcast .youtube-broadcast-heading { display: none; }
 .screen-broadcast .youtube-broadcast iframe { min-height: 0; }
+
+.minimal-screen:has(.screen-sponsors) .screen-broadcast .youtube-broadcast {
+  width: min(100%, calc((100svh - 380px) * 16 / 9));
+}

@@ -4,8 +4,10 @@ import YouTubeBroadcast, { videoId } from "./YouTubeBroadcast";
 import AmbientScenes from "./AmbientScenes";
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Maximize, Settings2 } from "lucide-react";
 import AlertCenter, { type LiveAlert } from "./AlertCenter";
+import ScreenSponsors from "./ScreenSponsors";
 import "./fullscreen-display.css";
 
 type Activity = { id: string; title: string; start: string; location: string };
@@ -100,6 +102,13 @@ export default function FullscreenDisplay({
         </div>
       ) : <>
       {!judging && <section className="screen-stage" aria-label="Compte enrere">
+        <Image
+          className="screen-countdown-logo"
+          src="/lleidahack-wordmark.svg"
+          alt="LleidaHack"
+          width={326}
+          height={80}
+        />
         {finished && <h1>Temps de lliurament finalitzat</h1>}
         <div className={`screen-timer ${deadline ? "" : "is-pending"}`}>
           {countdown}
@@ -191,6 +200,7 @@ export default function FullscreenDisplay({
         )}
       </section>
       </>}
+      <ScreenSponsors key={eventId} eventId={eventId} />
       <div className={`screen-tools ${toolsOpen ? "is-open" : ""}`}>
         <button
           className="screen-settings-toggle"

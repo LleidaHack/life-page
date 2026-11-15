@@ -5,12 +5,14 @@ import AmbientScenes from "./AmbientScenes";
 import { useCallback, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import Image from "next/image";
 import AlertCenter, { type LiveAlert } from "./AlertCenter";
 import LiveHomePanels from "./LiveHomePanels";
 import YouTubeBroadcast from "./YouTubeBroadcast";
 import NotificationInvitation from "./NotificationInvitation";
 import ScheduleTimeline from "./ScheduleTimeline";
 import FullscreenDisplay from "./FullscreenDisplay";
+import ScreenSponsors from "./ScreenSponsors";
 import "./event-live.css";
 import "./live-home.css";
 import { configuredEventId, liveApi, resolveEventId } from "@/lib/liveEvent";
@@ -307,7 +309,6 @@ export default function EventLive({ view = "home" }: { view?: string }) {
             <Link href="/map">Mapa</Link>
             <Link href="/help">Ajuda</Link>
             <Link href="/leaderboard">LleidaCoins</Link>
-            <Link href="/companies">Empreses</Link>
           </nav>
         </header>
         <div className="farm-page-content" aria-busy={!error}>
@@ -372,7 +373,6 @@ export default function EventLive({ view = "home" }: { view?: string }) {
             <Link href="/map">Mapa</Link>
             <Link href="/help">Ajuda</Link>
             <Link href="/leaderboard">LleidaCoins</Link>
-            <Link href="/companies">Empreses</Link>
             {judging && <Link href="/judging">Presentacions</Link>}
             <Link href="/fullscreen" onClick={enterFullscreen}>Pantalla completa</Link>
           </nav>
@@ -403,6 +403,13 @@ export default function EventLive({ view = "home" }: { view?: string }) {
               className={`farm-hero ${fullscreen ? "" : "live-home-intro"}`}
             >
               <div>
+                <Image
+                  className="home-countdown-logo"
+                  src="/lleidahack-wordmark.svg"
+                  alt="LleidaHack"
+                  width={326}
+                  height={80}
+                />
                 {left === 0 && <h1>Temps de lliurament finalitzat</h1>}
                 <Link
                   href="/fullscreen"
@@ -633,6 +640,7 @@ export default function EventLive({ view = "home" }: { view?: string }) {
           Pantalla completa
         </button>
       )}
+      {view === "home" && <ScreenSponsors key={eventId} eventId={eventId} />}
       {game && <TractorRun onClose={closeGame} />}
     </main>
   );
