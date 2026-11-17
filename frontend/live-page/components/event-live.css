@@ -193,7 +193,7 @@
   cursor: pointer;
   text-decoration: none;
 }
-.farm-live button:hover,
+.farm-live button:where(:not(.screen-sponsor-toggle)):hover,
 .farm-button:hover {
   background: var(--ink);
   color: #fff;
@@ -718,4 +718,17 @@
   object-fit: contain;
   object-position: left center;
   margin-bottom: 16px;
+}
+
+.farm-judging-grid article > .company-logo,
+.screen-room > .company-logo {
+  display: block;
+  width: auto;
+  max-width: min(100%, 10rem);
+  height: 2.75rem;
+  object-fit: contain;
+  padding: .3rem .5rem;
+  margin-bottom: .5rem;
+  background: white;
+  border-radius: .35rem;
 }
