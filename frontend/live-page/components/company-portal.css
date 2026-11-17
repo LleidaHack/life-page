@@ -37,8 +37,7 @@
   text-transform: uppercase;
 }
 .company-content {
-  max-width: 1240px;
-  margin: auto;
+  width: 100%;
   padding: 32px clamp(20px, 4vw, 64px) 120px;
   background:
     url("/hackeps/cloud-1.svg") right 40px / 160px auto no-repeat,
@@ -182,20 +181,59 @@
   background: var(--orange);
   box-shadow: 3px 3px 0 var(--ink);
 }
+.company-review {
+  display: grid;
+  gap: 20px;
+  align-items: start;
+}
+.company-review > * {
+  min-width: 0;
+}
+.company-review .company-card {
+  margin: 0;
+}
+.company-review-tools {
+  display: grid;
+  gap: 16px;
+}
+.company-project-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 20px;
+  font-weight: 700;
+}
+.company-project-links p {
+  margin: 0;
+}
 .company-timer {
-  background: var(--orange);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  padding: 8px 14px;
+  background: var(--paper);
+  border-left: 3px solid var(--orange);
 }
 .company-timer > span {
-  font-size: 12px;
-  font-weight: 700;
-  text-transform: uppercase;
+  font-size: 13px;
 }
 .company-timer strong {
-  display: block;
-  font-size: clamp(52px, 8vw, 88px);
-  line-height: 1.2;
-  letter-spacing: -0.06em;
+  margin-left: auto;
+  font-size: 18px;
   font-variant-numeric: tabular-nums;
+}
+.company-timer p {
+  margin: 0;
+  font-size: 13px;
+}
+.company-timer-actions {
+  flex-basis: 100%;
+}
+@media (min-width: 840px) {
+  .company-review {
+    grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+  }
 }
 .company-description {
   white-space: pre-wrap;
@@ -217,7 +255,6 @@
   border-radius: 4px;
 }
 .company-login {
-  max-width: 540px;
   margin: 16px auto 32px;
 }
 .company-edition-logo {

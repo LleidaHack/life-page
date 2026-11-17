@@ -7,6 +7,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Maximize, Settings2 } from "lucide-react";
 import AlertCenter, { type LiveAlert } from "./AlertCenter";
+import CompanyLogo from "./CompanyLogo";
 import ScreenSponsors from "./ScreenSponsors";
 import "./fullscreen-display.css";
 
@@ -18,7 +19,7 @@ type Presentation = {
   state: string;
   scheduled_at: string | null;
 };
-type Room = { id: string; title: string; paused: boolean };
+type Room = { id: string; title: string; paused: boolean; company?: string };
 
 export default function FullscreenDisplay({
   streamUrl,
@@ -147,6 +148,7 @@ export default function FullscreenDisplay({
                 const visibleTurns = turns.slice(0, 5);
                 return (
                   <article key={r.id} className={`screen-room ${r.paused ? "is-paused" : ""}`}>
+                    {r.company && <CompanyLogo name={r.company} />}
                     <div className="screen-room-heading"><h2>{r.title}</h2><span>{r.paused ? "En pausa" : `${turns.length} en cua`}</span></div>
                     {turns.length ? (
                       visibleTurns.map((p) => (

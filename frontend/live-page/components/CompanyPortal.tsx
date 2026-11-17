@@ -21,6 +21,12 @@ type Project = {
   title: string;
   team: string;
   description: string;
+  ribo_prize?: boolean;
+  materials?: {
+    try_links?: string[];
+    gallery?: string[];
+    technologies?: string;
+  };
   repository_url: string | null;
   demo_url: string | null;
   members: string[];
@@ -29,13 +35,12 @@ type Project = {
   note: Note;
 };
 type Snapshot = {
+  mode: "waiting" | "demo" | "real";
   company: string;
   server_time: string;
   duration_seconds: number;
   rooms: string[];
   room_labels: Record<string, string>;
-  version: number;
-  winner_id: number | null;
   finalized_at: string | null;
   projects: Project[];
   presentations: {
@@ -77,10 +82,6 @@ class PortalError extends Error {
             {
               "Company evaluation is finalized; contact the organization":
                 "La valoració està tancada. Contacta amb l’organització per reobrir-la.",
-              "Finish all presentations before closing evaluations":
-                "Cal acabar tots els torns abans de tancar la valoració.",
-              "Select the winner before confirming the decision":
-                "Selecciona primer el projecte guanyador.",
               "Presentation changed; refresh first":
                 "Un altre dispositiu ha modificat la presentació. Revisa l’estat actual abans de continuar.",
               "Scan the team into the room before controlling its presentation":
@@ -145,7 +146,9 @@ function Notes({
   onDirty,
   onSaved,
   locked,
+  demo = false,
 }: {
+  demo?: boolean;
   project: Project;
   token: string;
   eventId: string;
@@ -182,17 +185,23 @@ function Notes({
     setBusy(true);
     setError("");
     try {
-      const result = await api<Note>(
-        `/events/${eventId}/notes/${project.id}`,
-        token,
-        "PUT",
-        {
-          text: draft.text,
-          score: draft.score,
-          favorite: draft.favorite,
-          version,
-        },
-      );
+      const result = demo
+        ? {
+            ...draft,
+            version: version + 1,
+            updated_at: new Date().toISOString(),
+          }
+        : await api<Note>(
+            `/events/${eventId}/notes/${project.id}`,
+            token,
+            "PUT",
+            {
+              text: draft.text,
+              score: draft.score,
+              favorite: draft.favorite,
+              version,
+            },
+          );
       setDraft(result);
       setSaved(result);
       setConflict(null);
@@ -294,6 +303,152 @@ function Notes({
   );
 }
 
+const demoProject: Project = {
+  id: -1,
+  ribo_prize: true,
+  title: "Gota a gota",
+  team: "Equip Riu",
+  members: ["Mar", "Nil", "Ona"],
+  challenge: "Repte de l’aigua",
+  description:
+    "Un mapa interactiu que ajuda els equips de manteniment a detectar fuites d’aigua als jardins de Lleida.",
+  url: null,
+  demo_url: null,
+  repository_url: null,
+  note: {
+    text: "",
+    score: null,
+    favorite: false,
+    version: 0,
+    updated_at: null,
+  },
+};
+
+function PortalDemo({
+  clock,
+  view,
+  onOpen,
+}: {
+  clock: number;
+  view: string;
+  onOpen: () => void;
+}) {
+  const [deadline, setDeadline] = useState(() => Date.now() + 300000);
+  const [stage, setStage] = useState<"waiting" | "ready" | "running" | "done">(
+    "running",
+  );
+  const [attempt, setAttempt] = useState(0);
+  return (
+    <section aria-label="Demostració del portal">
+      <p className="company-eyebrow">Demostració · Projecte fictici</p>
+      {view === "projects" && (
+        <>
+          <h1>Projectes</h1>
+          <article className="company-card">
+            <h2>{demoProject.title}</h2>
+            {demoProject.ribo_prize && (
+              <strong>Opta al premi Josep Maria Ribó</strong>
+            )}
+            <p>
+              {demoProject.team} · {demoProject.challenge}
+            </p>
+            <Button onClick={onOpen}>Veure i anotar</Button>
+          </article>
+        </>
+      )}
+      <div hidden={view !== "now"}>
+        {stage === "waiting" || stage === "done" ? (
+          <section className="company-card">
+            <h2>
+              {stage === "done"
+                ? "Presentació finalitzada"
+                : "Equip a la sala d’espera"}
+            </h2>
+            <p>
+              {demoProject.team} · {demoProject.title}
+            </p>
+            <Button
+              onClick={() => {
+                setStage("ready");
+                setAttempt(attempt + 1);
+              }}
+            >
+              Simular l’escaneig del QR de la Mar
+            </Button>
+          </section>
+        ) : (
+          <>
+            <div className="company-review">
+              <article className="company-card">
+                <span>{demoProject.challenge}</span>
+                <h1>{demoProject.title}</h1>
+                {demoProject.ribo_prize && (
+                  <strong>Opta al premi Josep Maria Ribó</strong>
+                )}
+                <p>
+                  {demoProject.team} · {demoProject.members.join(", ")}
+                </p>
+                <p className="company-description">{demoProject.description}</p>
+              </article>
+              <div className="company-review-tools">
+                <section
+                  className="company-timer"
+                  aria-label="Temps de presentació"
+                >
+                  <span>
+                    {stage === "ready"
+                      ? "Equip a la sala · pendent d’iniciar"
+                      : "Presentació en curs"}
+                  </span>
+                  <strong role="timer">
+                    {stage === "ready"
+                      ? "05:00"
+                      : formatRemaining(Math.ceil((deadline - clock) / 1000))}
+                  </strong>
+                  <div className="company-timer-actions">
+                    {stage === "ready" ? (
+                      <Button
+                        onClick={() => {
+                          setDeadline(Date.now() + 300000);
+                          setStage("running");
+                        }}
+                      >
+                        Iniciar 5 minuts
+                      </Button>
+                    ) : (
+                      <Button onClick={() => setDeadline((end) => end + 60000)}>
+                        +1 minut
+                      </Button>
+                    )}
+                    <Button onClick={() => setStage("done")}>
+                      Finalitzar presentació
+                    </Button>
+                  </div>
+                </section>
+                <Notes
+                  key={attempt}
+                  demo
+                  project={demoProject}
+                  locked={false}
+                  eventId=""
+                  token=""
+                  onDirty={ignoreDemoChange}
+                  onSaved={ignoreDemoChange}
+                />
+              </div>
+            </div>
+            <Button onClick={() => setStage("waiting")}>
+              Provar l’arribada d’un equip
+            </Button>
+          </>
+        )}
+      </div>
+    </section>
+  );
+}
+
+function ignoreDemoChange() {}
+
 export default function CompanyPortal() {
   const [token, setToken] = useState(""),
     [ready, setReady] = useState(false),
@@ -313,7 +468,6 @@ export default function CompanyPortal() {
   const [pendingControl, setPendingControl] = useState<PendingControl | null>(
     null,
   );
-  const finalizationAttempt = useRef<{ key: string; id: string } | null>(null);
   const [controlling, setControlling] = useState(false);
   const [controlError, setControlError] = useState("");
   const previousCurrent = useRef<number | null>(null);
@@ -518,63 +672,6 @@ export default function CompanyPortal() {
       setBusy(false);
     }
   }
-  async function finalizeEvaluation() {
-    if (!data?.winner_id || busy || data.finalized_at) return;
-    if (dirty.current) {
-      setControlError("Desa les notes abans de tancar la valoració.");
-      return;
-    }
-    if (
-      !confirm(
-        "Tancar la valoració i confirmar el guanyador? Les notes i la selecció quedaran bloquejades. Només l’organització ho podrà reobrir.",
-      )
-    )
-      return;
-    const key = JSON.stringify([eventId, data.version, data.winner_id]);
-    if (finalizationAttempt.current?.key !== key)
-      finalizationAttempt.current = { key, id: crypto.randomUUID() };
-    setBusy(true);
-    setControlError("");
-    try {
-      await api(`/events/${eventId}/finalize`, token, "POST", {
-        version: data.version,
-        group_id: data.winner_id,
-        operation_id: finalizationAttempt.current.id,
-      });
-      finalizationAttempt.current = null;
-      await load();
-    } catch (e) {
-      setControlError(
-        e instanceof Error
-          ? e.message
-          : "No s’ha pogut confirmar el tancament. Actualitza i comprova’n l’estat.",
-      );
-      void load().catch(() => {});
-    } finally {
-      setBusy(false);
-    }
-  }
-  async function chooseWinner(groupId: number) {
-    if (
-      !data ||
-      !confirm(
-        "Confirmar aquest projecte com a proposta privada de guanyador? No es publicarà el resultat.",
-      )
-    )
-      return;
-    setBusy(true);
-    try {
-      await api(`/events/${eventId}/winner`, token, "PUT", {
-        version: data.version,
-        group_id: groupId,
-      });
-      await load();
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "No s’ha pogut desar.");
-    } finally {
-      setBusy(false);
-    }
-  }
   return (
     <main className="company-portal">
       <header className="company-header">
@@ -695,44 +792,11 @@ export default function CompanyPortal() {
                   : ""}
               </p>
             )}
-            {data && (
-              <section
-                className="company-card"
-                aria-label="Tancament de la valoració"
-              >
-                {data.finalized_at ? (
-                  <p role="status">
-                    Valoració tancada · Guanyador:{" "}
-                    {data.projects.find((p) => p.id === data.winner_id)
-                      ?.title || "Equip seleccionat"}
-                    . Contacta amb l’organització si cal corregir-la.
-                  </p>
-                ) : (
-                  <>
-                    <p>
-                      Guanyador proposat:{" "}
-                      {data.projects.find((p) => p.id === data.winner_id)
-                        ?.title || "Encara no seleccionat"}
-                    </p>
-                    <p>
-                      Selecciona’l a Projectes i tanca la valoració quan tots
-                      els equips hagin acabat.
-                    </p>
-                    <Button
-                      disabled={
-                        busy ||
-                        !data.winner_id ||
-                        data.presentations.some(
-                          (p) => !["done", "absent"].includes(p.state),
-                        )
-                      }
-                      onClick={() => void finalizeEvaluation()}
-                    >
-                      Confirmar guanyador i tancar valoració
-                    </Button>
-                  </>
-                )}
-              </section>
+            {data?.finalized_at && (
+              <p role="status">
+                La valoració està tancada. Contacta amb l’organització si cal
+                modificar les notes.
+              </p>
             )}
             {controlError && (
               <p className="company-error" role="alert">
@@ -754,126 +818,207 @@ export default function CompanyPortal() {
                 </Button>
               </div>
             )}
-            {data && (
+            {data?.mode === "waiting" && (
+              <p role="status">
+                {view === "projects"
+                  ? "Els projectes apareixeran quan comenci el judging."
+                  : "El judging encara no ha començat."}
+              </p>
+            )}
+            {data?.mode === "demo" && (
+              <PortalDemo
+                clock={clock}
+                view={view}
+                onOpen={() => setView("now")}
+              />
+            )}
+            {data?.mode === "real" && (
               <>
                 {view === "now" && (
-                  <>
-                    <section className="company-card company-timer">
-                      <span>
-                        {current
-                          ? current.started_at
-                            ? "Presentació en curs"
-                            : "Equip a la sala · pendent d’iniciar"
-                          : "Esperant l’escaneig del següent equip"}
-                      </span>
-                      <strong>{formatRemaining(remaining)}</strong>
-                      {remaining !== null && remaining <= 0 && (
-                        <p>
-                          Temps previst esgotat. Podeu ampliar-lo o finalitzar
-                          quan l’equip acabi.
-                        </p>
-                      )}
-                      {current && (
-                        <div className="company-timer-actions">
-                          <p>
-                            {
-                              data.projects.find(
-                                (p) => p.id === current.group_id,
-                              )?.team
-                            }
-                          </p>
-                          {!current.started_at ? (
-                            <Button
-                              disabled={controlling || !!pendingControl}
-                              onClick={() => void controlPresentation("start")}
-                            >
-                              Iniciar 5 minuts
-                            </Button>
-                          ) : (
-                            <Button
-                              disabled={controlling || !!pendingControl}
-                              onClick={() => void controlPresentation("extend")}
-                            >
-                              +1 minut
-                            </Button>
-                          )}
-                          <Button
-                            disabled={controlling || !!pendingControl}
-                            onClick={() => void controlPresentation("finish")}
-                          >
-                            Finalitzar presentació
-                          </Button>
-                          {controlling && (
-                            <p role="status">Actualitzant la presentació…</p>
-                          )}
-                        </div>
-                      )}
-                      {!current && (
-                        <p>
-                          {(() => {
-                            const next = data.presentations.find(
-                              (p) =>
-                                p.room === activeRoom && p.state === "called",
-                            );
-                            return next
-                              ? `Equip avisat: ${data.projects.find((p) => p.id === next.group_id)?.team || "següent equip"}. L’organització l’ha d’escanejar per entrar.`
-                              : "L’organització prepararà el següent equip.";
-                          })()}
-                        </p>
-                      )}
-                      {current && selected !== current.group_id && (
-                        <Button
-                          onClick={() =>
-                            navigate(() => setSelected(current.group_id))
-                          }
-                        >
-                          Veure el projecte que s’està presentant
-                        </Button>
-                      )}
-                    </section>
-                    {project ? (
-                      <>
+                  <div className="company-review">
+                    <div className="company-project-detail">
+                      {project ? (
                         <article className="company-card">
                           <span>{project.challenge}</span>
                           <h1>{project.title}</h1>
+                          {project.ribo_prize && (
+                            <strong>Opta al premi Josep Maria Ribó</strong>
+                          )}
                           <p>
                             {project.team} · {project.members.join(", ")}
                           </p>
+                          <div className="company-project-links">
+                            {safeUrl(project.url) && (
+                              <a
+                                href={project.url!}
+                                target="_blank"
+                                rel="noreferrer"
+                              >
+                                Veure projecte a Devpost ↗
+                              </a>
+                            )}
+                            {safeUrl(project.repository_url) && (
+                              <p>
+                                <a
+                                  href={project.repository_url!}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                >
+                                  Repositori ↗
+                                </a>
+                              </p>
+                            )}
+                            {safeUrl(project.demo_url) && (
+                              <p>
+                                <a
+                                  href={project.demo_url!}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                >
+                                  Demo / vídeo ↗
+                                </a>
+                              </p>
+                            )}
+                            {project.materials?.try_links?.map((link) => {
+                              const href = safeUrl(link);
+                              if (
+                                !href ||
+                                href === project.demo_url ||
+                                href === project.repository_url
+                              )
+                                return null;
+                              const url = new URL(href);
+                              return (
+                                <p key={href}>
+                                  <a
+                                    href={href}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                  >
+                                    {url.hostname}
+                                    {url.pathname.replace(/\/$/, "")} ↗
+                                  </a>
+                                </p>
+                              );
+                            })}
+                            {project.materials?.gallery?.map(
+                              (link, i) =>
+                                safeUrl(link) && (
+                                  <p key={link}>
+                                    <a
+                                      href={link}
+                                      target="_blank"
+                                      rel="noreferrer"
+                                    >
+                                      Imatge {i + 1} ↗
+                                    </a>
+                                  </p>
+                                ),
+                            )}
+                          </div>
+                          {project.materials?.technologies && (
+                            <p>
+                              <strong>Tecnologies</strong> ·{" "}
+                              {project.materials.technologies}
+                            </p>
+                          )}
                           <p className="company-description">
                             {project.description || "Descripció no disponible."}
                           </p>
-                          {safeUrl(project.url) && (
-                            <a
-                              href={project.url!}
-                              target="_blank"
-                              rel="noreferrer"
-                            >
-                              Veure projecte a Devpost ↗
-                            </a>
-                          )}
-                          {safeUrl(project.repository_url) && (
-                            <p>
-                              <a
-                                href={project.repository_url!}
-                                target="_blank"
-                                rel="noreferrer"
-                              >
-                                Repositori ↗
-                              </a>
-                            </p>
-                          )}
-                          {safeUrl(project.demo_url) && (
-                            <p>
-                              <a
-                                href={project.demo_url!}
-                                target="_blank"
-                                rel="noreferrer"
-                              >
-                                Demo / vídeo ↗
-                              </a>
-                            </p>
-                          )}
                         </article>
+                      ) : (
+                        <p>
+                          Selecciona un projecte o espera que comenci una
+                          presentació.
+                        </p>
+                      )}
+                    </div>
+                    <div className="company-review-tools">
+                      <section
+                        className="company-timer"
+                        aria-label="Temps de presentació"
+                      >
+                        <span>
+                          {current
+                            ? current.started_at
+                              ? "Presentació en curs"
+                              : "Equip a la sala · pendent d’iniciar"
+                            : "Esperant l’escaneig del següent equip"}
+                        </span>
+                        {current && (
+                          <strong role="timer">
+                            {formatRemaining(remaining)}
+                          </strong>
+                        )}
+                        {remaining !== null && remaining <= 0 && (
+                          <p>
+                            Temps previst esgotat. Podeu ampliar-lo o finalitzar
+                            quan l’equip acabi.
+                          </p>
+                        )}
+                        {current && (
+                          <div className="company-timer-actions">
+                            <p>
+                              {
+                                data.projects.find(
+                                  (p) => p.id === current.group_id,
+                                )?.team
+                              }
+                            </p>
+                            {!current.started_at ? (
+                              <Button
+                                disabled={controlling || !!pendingControl}
+                                onClick={() =>
+                                  void controlPresentation("start")
+                                }
+                              >
+                                Iniciar 5 minuts
+                              </Button>
+                            ) : (
+                              <Button
+                                disabled={controlling || !!pendingControl}
+                                onClick={() =>
+                                  void controlPresentation("extend")
+                                }
+                              >
+                                +1 minut
+                              </Button>
+                            )}
+                            <Button
+                              disabled={controlling || !!pendingControl}
+                              onClick={() => void controlPresentation("finish")}
+                            >
+                              Finalitzar presentació
+                            </Button>
+                            {controlling && (
+                              <p role="status">Actualitzant la presentació…</p>
+                            )}
+                          </div>
+                        )}
+                        {!current && (
+                          <p>
+                            {(() => {
+                              const next = data.presentations.find(
+                                (p) =>
+                                  p.room === activeRoom && p.state === "called",
+                              );
+                              return next
+                                ? `Equip avisat: ${data.projects.find((p) => p.id === next.group_id)?.team || "següent equip"}. L’organització l’ha d’escanejar per entrar.`
+                                : "L’organització prepararà el següent equip.";
+                            })()}
+                          </p>
+                        )}
+                        {current && selected !== current.group_id && (
+                          <Button
+                            onClick={() =>
+                              navigate(() => setSelected(current.group_id))
+                            }
+                          >
+                            Veure el projecte que s’està presentant
+                          </Button>
+                        )}
+                      </section>
+                      {project && (
                         <Notes
                           key={`${eventId}:${project.id}`}
                           project={project}
@@ -894,14 +1039,9 @@ export default function CompanyPortal() {
                             )
                           }
                         />
-                      </>
-                    ) : (
-                      <p>
-                        Selecciona un projecte o espera que comenci una
-                        presentació.
-                      </p>
-                    )}
-                  </>
+                      )}
+                    </div>
+                  </div>
                 )}
                 {view === "projects" && (
                   <>
@@ -933,6 +1073,9 @@ export default function CompanyPortal() {
                         .map((p) => (
                           <article className="company-card" key={p.id}>
                             <h2>{p.title}</h2>
+                            {p.ribo_prize && (
+                              <strong>Opta al premi Josep Maria Ribó</strong>
+                            )}
                             <p>
                               {p.team} ·{" "}
                               {p.note.version
@@ -954,14 +1097,6 @@ export default function CompanyPortal() {
                             >
                               Veure i anotar
                             </Button>
-                            <Button
-                              disabled={busy || !!data.finalized_at}
-                              onClick={() => void chooseWinner(p.id)}
-                            >
-                              {data.winner_id === p.id
-                                ? "Guanyador proposat ✓"
-                                : "Proposar guanyador"}
-                            </Button>
                           </article>
                         ))}
                     </div>
@@ -969,20 +1104,28 @@ export default function CompanyPortal() {
                 )}
               </>
             )}
-            <nav className="company-bottom" aria-label="Portal d’empreses">
-              {[
-                ["now", "Ara"],
-                ["projects", "Projectes"],
-              ].map(([key, label]) => (
-                <Button
-                  key={key}
-                  aria-pressed={view === key}
-                  onClick={() => navigate(() => setView(key))}
-                >
-                  {label}
-                </Button>
-              ))}
-            </nav>
+            {data && (
+              <nav className="company-bottom" aria-label="Portal d’empreses">
+                {[
+                  ["now", "Ara"],
+                  ["projects", "Projectes"],
+                ].map(([key, label]) => (
+                  <Button
+                    key={key}
+                    aria-pressed={view === key}
+                    onClick={() =>
+                      navigate(() => {
+                        if (key === "now")
+                          setSelected(current?.group_id ?? null);
+                        setView(key);
+                      })
+                    }
+                  >
+                    {label}
+                  </Button>
+                ))}
+              </nav>
+            )}
           </>
         )}
       </div>

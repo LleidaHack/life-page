@@ -337,6 +337,8 @@ export default function EventLive({ view = "home" }: { view?: string }) {
       p.team.toLowerCase().includes(search.toLowerCase()),
   );
   const judging = data.phase === "judging" || (data.phase === "hacking" && left === 0);
+  const roomCompanies = new Map(data.challenges.map((challenge) => [challenge.id, challenge.company]));
+  const judgingRooms = data.rooms.map((room) => ({ ...room, company: roomCompanies.get(room.id) }));
   if (fullscreen)
     return (
       <FullscreenDisplay
@@ -349,7 +351,7 @@ export default function EventLive({ view = "home" }: { view?: string }) {
         activities={activities}
         leaderboard={data.leaderboard ?? []}
         judging={judging}
-        rooms={data.rooms}
+        rooms={judgingRooms}
         presentations={presentations}
         room={room}
         alerts={data.alerts}
@@ -531,10 +533,11 @@ export default function EventLive({ view = "home" }: { view?: string }) {
               />
             )}
             <div className="farm-grid farm-judging-grid">
-              {data.rooms
+              {judgingRooms
                 .filter((r) => !room || r.id === room)
                 .map((r) => (
                   <article key={r.id}>
+                    {r.company && <CompanyLogo name={r.company} />}
                     <h3>
                       {r.title} {r.paused && "· En pausa"}
                     </h3>
