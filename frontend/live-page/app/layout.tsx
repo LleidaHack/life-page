@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Space_Mono } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 
@@ -23,7 +24,7 @@ export default function RootLayout({
     <html lang="ca">
       <body className={`${mono.variable} antialiased `}>
         {children}
-
+        <Analytics />
       </body>
     </html>
   );
