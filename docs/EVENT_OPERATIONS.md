@@ -61,3 +61,7 @@ The Dockerfile and `docker-compose.yml` remain as a self-hosted alternative (the
 - HTTP snapshot polling is a fallback: every ~20 s while the WebSocket is open, ~4 s otherwise, with jitter, exponential backoff on errors and no polling in hidden tabs.
 - WebSocket reconnects with exponential backoff (3 s → 60 s, jitter), stops on close code 1008 (unknown event) and reconnects when no heartbeat arrives for 45 s.
 - The service worker shows a system notification unless a visible Live page for the same event acknowledges the alert.
+
+## Mechanical bull reveal
+
+Open the public Live pages or projector and select **Activar so** on each screen that should play the fairground horn. In Gestió → Comunicació → Live, click **Llançar el toro mecànic al Live** when ready. This organizer action broadcasts to the current event’s connected WebSockets. The animation lasts 12 seconds. Screens joining afterward do not replay it. The horn uses the first blast from [FUN FUN’s bumper-car recording](https://www.youtube.com/watch?v=g706-S65SVE). For a single-screen rehearsal, open `/?preview=bull` on the development server and click **Provar animació amb so**.

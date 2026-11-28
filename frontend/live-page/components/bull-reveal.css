@@ -1,0 +1,95 @@
+.bull-reveal {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  isolation: isolate;
+  overflow: hidden;
+  background: #000;
+  animation: bull-blackout .35s both, bull-curtain-out .65s 11.35s forwards;
+}
+.bull-charge {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(60vw, 55vh);
+  animation: bull-charge 2.9s .6s cubic-bezier(.55,.1,.85,.45) both;
+}
+.bull-charge i {
+  display: block;
+  aspect-ratio: 72 / 64;
+  image-rendering: pixelated;
+  background: url("/hackeps/bull-run.png") 0 0 / 400% 100% no-repeat;
+  animation: bull-gallop .32s steps(4, jump-none) 11;
+}
+@keyframes bull-gallop { to { background-position: 100% 0; } }
+@keyframes bull-charge {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(.06); }
+  10% { opacity: 1; }
+  62% { transform: translate(-50%, -49%) scale(.78); }
+  85% { transform: translate(-53%, -45%) scale(1.7); }
+  99% { opacity: 1; }
+  100% { opacity: 0; transform: translate(-70%, 370%) scale(7); }
+}
+.bull-wall { position: absolute; inset: 0; }
+.bull-poster {
+  --paper: #ff8948;
+  --print: #331c17;
+  position: absolute;
+  width: 4.95em;
+  padding: .23em .3em .18em;
+  color: var(--print);
+  background: var(--paper);
+  outline: .04em solid var(--print);
+  outline-offset: -.12em;
+  font-size: clamp(2.2rem, 6vmax, 5.8rem);
+  text-align: center;
+  box-shadow: 0 .12em .18em #0005;
+  transform: translate(-50%, -50%) rotate(var(--angle));
+  animation: bull-paste .22s var(--delay) cubic-bezier(.16,1,.3,1) backwards;
+}
+.bull-poster:nth-child(3n + 2) { --paper: #ffdba0; }
+.bull-poster:nth-child(3n) { --paper: #ac3b25; --print: #fff0c9; }
+.bull-poster strong {
+  display: block;
+  font-weight: 950;
+  text-transform: uppercase;
+  line-height: .89;
+  letter-spacing: -.035em;
+}
+.bull-poster span {
+  display: block;
+  border-top: .09em solid;
+  margin-top: .38em;
+  padding: .18em 0;
+  font-size: .43em;
+  line-height: 1.15;
+  text-transform: uppercase;
+}
+.bull-poster:last-child {
+  width: min(78vw, 9em);
+  font-size: min(12vw, 12vh, 7.5rem);
+  --paper: #ff9a50;
+}
+@keyframes bull-paste {
+  from { opacity: 0; transform: translate(-50%, -55%) rotate(var(--angle)) scale(1.25); }
+}
+@keyframes bull-blackout { from { opacity: 0; } to { opacity: 1; } }
+@keyframes bull-curtain-out { to { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .bull-reveal, .bull-poster { animation: none; }
+  .bull-charge, .bull-poster:not(:last-child) { display: none; }
+}
+
+.bull-preview {
+  position: fixed;
+  z-index: 1000;
+  right: 1rem;
+  bottom: 1rem;
+  padding: .75rem 1rem;
+  background: #ffad64;
+  color: #331c17;
+  border: 2px solid currentColor;
+  border-radius: .5rem;
+  font-weight: bold;
+  cursor: pointer;
+}

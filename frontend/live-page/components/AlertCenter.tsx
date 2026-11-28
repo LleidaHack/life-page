@@ -1,7 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { Bell, Volume2, VolumeX, X } from "lucide-react";
+import { activeLiveAudio, enableLiveAudio, muteLiveAudio, subscribeToLiveAudio } from "@/lib/liveAudio";
 import ScreenAnnouncement from "./ScreenAnnouncement";
 
 export type LiveAlert = {
@@ -12,14 +13,11 @@ export type LiveAlert = {
   expires_at?: string;
 };
 
-let audioContext: AudioContext | null = null;
-let soundEnabled = false;
 const DISPLAY_MS = 8000;
 
 function playTone() {
-  if (!soundEnabled || audioContext?.state !== "running" || document.hidden)
-    return;
-  const context = audioContext;
+  const context = activeLiveAudio();
+  if (!context || document.hidden) return;
   for (const [index, frequency] of [660, 880].entries()) {
     const oscillator = context.createOscillator();
     const volume = context.createGain();
@@ -54,8 +52,8 @@ export default function AlertCenter({
   projection?: boolean;
 }) {
   const [visible, setVisible] = useState<LiveAlert[]>([]);
-  const [enabled, setEnabled] = useState(
-    soundEnabled && audioContext?.state === "running",
+  const enabled = useSyncExternalStore(
+    subscribeToLiveAudio, () => !!activeLiveAudio(), () => false,
   );
   const [audioError, setAudioError] = useState("");
   const seen = useRef(new Set<string>());
@@ -151,17 +149,11 @@ export default function AlertCenter({
 
   async function toggleSound() {
     if (enabled) {
-      soundEnabled = false;
-      setEnabled(false);
+      muteLiveAudio();
       return;
     }
     try {
-      audioContext ??= new AudioContext();
-      await audioContext.resume();
-      if (audioContext.state !== "running")
-        throw new Error("Audio unavailable");
-      soundEnabled = true;
-      setEnabled(true);
+      await enableLiveAudio();
       setAudioError("");
       playTone();
     } catch {

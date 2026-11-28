@@ -1,6 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
+import BullReveal from "./BullReveal";
 import EventLive from "./EventLive";
 
 const views: Record<string, string> = {
@@ -18,5 +19,8 @@ const views: Record<string, string> = {
 export default function LiveNavigation({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const view = views[pathname];
-  return view ? <EventLive view={view} /> : children;
+  return view ? <>
+    <EventLive view={view} />
+    <BullReveal />
+  </> : children;
 }
