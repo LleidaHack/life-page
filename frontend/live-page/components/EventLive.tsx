@@ -194,6 +194,9 @@ export default function EventLive({ view = "home" }: { view?: string }) {
         resetWatchdog();
         try {
           const message = JSON.parse(event.data);
+          if (message.type === "bull_reveal") {
+            window.dispatchEvent(new Event("hackeps-bull-reveal"));
+          }
           if (message.type === "alerts" && Array.isArray(message.alerts)) {
             setData((current) =>
               current ? { ...current, alerts: message.alerts } : current,
